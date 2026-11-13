@@ -42,8 +42,10 @@ describe('chrome-devtools', () => {
   it('does not forward emulate viewport tool arg to daemon startup flags on auto-start', async () => {
     await assertDaemonIsNotRunning(sessionId);
 
+    // Pass an out-of-range cpuThrottlingRate so tool validation fails before
+    // launching Chrome after the daemon auto-starts.
     const emulateResult = await runCli(
-      ['emulate', '1', '--viewport', '500x400x1'],
+      ['emulate', '1', '--viewport', '500x400x1', '--cpuThrottlingRate', '0'],
       sessionId,
     );
     assert.strictEqual(
@@ -51,6 +53,7 @@ describe('chrome-devtools', () => {
       0,
       `emulate command failed: ${emulateResult.stderr}`,
     );
+    assert.match(emulateResult.stdout, /cpuThrottlingRate/);
 
     const statusResult = await runCli(['status'], sessionId);
     assert.strictEqual(
