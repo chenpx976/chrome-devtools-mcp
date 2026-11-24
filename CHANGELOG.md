@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.1](https://github.com/ChromeDevTools/chrome-devtools-mcp/compare/chrome-devtools-mcp-v1.14.0...chrome-devtools-mcp-v1.14.1) (2026-11-24)
+
+
+### 🛠️ Fixes
+
+* match preflight and prefetch network mocks ([#3608](https://github.com/ChromeDevTools/chrome-devtools-mcp/issues/3608)) ([7fcebb2](https://github.com/ChromeDevTools/chrome-devtools-mcp/commit/7fcebb2b0392bb623ee50383a8e1ef680975b4aa)), closes [#3601](https://github.com/ChromeDevTools/chrome-devtools-mcp/issues/3601)
+
 ## [1.14.0](https://github.com/ChromeDevTools/chrome-devtools-mcp/compare/chrome-devtools-mcp-v1.13.0...chrome-devtools-mcp-v1.14.0) (2026-11-24)
 
 
