@@ -4,22 +4,42 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import assert from 'node:assert/strict';
 import {execSync} from 'node:child_process';
+import {readFileSync} from 'node:fs';
+
+import {PACKAGE_NAME, VERSION} from '../out/Default/gen/src/version.js';
 
 // Checks that the select build files are present using `npm pack --dry-run`.
 function verifyPackageContents() {
   try {
+    const manifest = JSON.parse(
+      readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+    );
+    assert.equal(manifest.name, PACKAGE_NAME);
+    assert.equal(manifest.version, VERSION);
     const output = execSync('npm pack --dry-run --json --silent', {
       encoding: 'utf8',
     });
     // skip non-JSON output from prepare.
     const jsonStart = output.search(/[{[]/);
     const data = JSON.parse(output.substring(jsonStart));
-    const pkgData = Array.isArray(data) ? data[0] : data['chrome-devtools-mcp'];
+    const pkgData = Array.isArray(data) ? data[0] : data[manifest.name];
+    assert.equal(pkgData.name, manifest.name);
+    assert.equal(pkgData.version, manifest.version);
+    assert.equal(manifest.publishConfig.access, 'public');
+    const server = JSON.parse(
+      readFileSync(new URL('../server.json', import.meta.url), 'utf8'),
+    );
+    assert.equal(server.name, manifest.mcpName);
+    assert.equal(server.version, manifest.version);
+    assert.equal(server.packages[0].identifier, manifest.name);
+    assert.equal(server.packages[0].version, manifest.version);
     const files = pkgData.files.map(f => f.path);
     // Check some important files.
     const requiredPaths = [
       'out/Default/gen/src/index.js',
+      'out/Default/gen/src/ArcBrowser.js',
       'out/Default/gen/src/bin/chrome-devtools-mcp.js',
       'out/Default/gen/src/bin/chrome-devtools.js',
       'out/Default/gen/src/third_party/index.js',
@@ -30,6 +50,10 @@ function verifyPackageContents() {
       'out/Default/gen/src/third_party/lighthouse-devtools-mcp-bundle.js',
       'out/Default/gen/src/third_party/THIRD_PARTY_NOTICES',
       'out/Default/gen/src/third_party/issue-descriptions/',
+      'skills/arc-compatibility/SKILL.md',
+      'skills/arc-compatibility/references/compatibility.md',
+      'skills/arc-compatibility/references/workflows.md',
+      'skills/arc-compatibility/references/output-contract.md',
     ];
     for (const requiredPath of requiredPaths) {
       const hasBuildFolder = files.some(path => path.startsWith(requiredPath));

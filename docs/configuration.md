@@ -1,5 +1,9 @@
 # Configuration
 
+Package launch examples require a verified release of
+`@chenpx976/chrome-devtools-mcp`. It is not yet published or verified; use the
+[local build](./arc.md#build-and-configure-the-local-server) until then.
+
 The Chrome DevTools MCP server supports the following configuration option:
 
 <!-- BEGIN AUTO GENERATED OPTIONS -->
@@ -283,7 +287,7 @@ Pass them via the `args` property in the JSON configuration. For example:
     "chrome-devtools": {
       "command": "npx",
       "args": [
-        "chrome-devtools-mcp@latest",
+        "@chenpx976/chrome-devtools-mcp@latest",
         "--channel=canary",
         "--headless=true",
         "--isolated=true"
@@ -365,7 +369,7 @@ You can connect directly to a Chrome WebSocket endpoint and include custom heade
     "chrome-devtools": {
       "command": "npx",
       "args": [
-        "chrome-devtools-mcp@latest",
+        "@chenpx976/chrome-devtools-mcp@latest",
         "--wsEndpoint=ws://127.0.0.1:9222/devtools/browser/<id>",
         "--wsHeaders={\"Authorization\":\"Bearer YOUR_TOKEN\"}"
       ]
@@ -376,4 +380,4 @@ You can connect directly to a Chrome WebSocket endpoint and include custom heade
 
 To get the WebSocket endpoint from a running Chrome instance, visit `http://127.0.0.1:9222/json/version` and look for the `webSocketDebuggerUrl` field.
 
-You can also run `npx chrome-devtools-mcp@latest --help` to see all available configuration options.
+You can also run `npx @chenpx976/chrome-devtools-mcp@latest --help` to see all available configuration options.

@@ -1,5 +1,25 @@
 # Compatibility contract
 
+## Distribution identity
+
+- Maintain `chenpx976/chrome-devtools-mcp` on `arc-support`; fetch actual
+  upstream changes from `ChromeDevTools/chrome-devtools-mcp`.
+- Keep npm identity `@chenpx976/chrome-devtools-mcp` across package/lockfile,
+  server registry metadata, plugins, update checks, docs, and release workflows.
+  Preserve executable names `chrome-devtools-mcp` and `chrome-devtools`,
+  unscoped plugin identifiers, protocol names, and upstream attribution.
+- Publish only the scoped main package, which includes both binaries. Do not
+  recreate the separate CLI alias publish step during an upstream merge.
+- Use a local build until the public scoped artifact is verified. Never
+  replace a missing/unpublished scoped package with the official npm package.
+- Verify a clean installation of the exact scoped release, including both
+  binaries and the actual client's Arc behavior. Registry metadata and a
+  passing local smoke alone do not prove the installed artifact works.
+- Bootstrap publication only after npm login and scope permission checks.
+  Subsequent npm trusted publishing uses GitHub owner `chenpx976`, repository
+  `chrome-devtools-mcp`, workflow `publish-to-npm-on-tag.yml`. Retain OIDC
+  permissions and release-tag dispatch behavior documented in `docs/arc.md`.
+
 ## Configuration and connection
 
 - Keep `arc` opt-in and `false` by default. Normal Chrome behavior must remain

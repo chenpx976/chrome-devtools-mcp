@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   publish-to-mcp-registry:
+    if: github.repository == 'chenpx976/chrome-devtools-mcp'
     runs-on: ubuntu-latest
     permissions:
       id-token: write # Required for OIDC

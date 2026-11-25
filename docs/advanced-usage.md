@@ -1,5 +1,9 @@
 # Advanced usage
 
+The scoped package examples below require a verified public release. The
+package is not yet published or verified; use the
+[local build](./arc.md#build-and-configure-the-local-server) until then.
+
 ## Concurrent sessions
 
 Most MCP clients start one Chrome DevTools MCP server per conversation. If your
@@ -13,7 +17,7 @@ each session can route tool calls to the tab it is working with. Use
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": ["-y", "@chenpx976/chrome-devtools-mcp@latest"]
     }
   }
 }
@@ -52,7 +56,10 @@ in a custom or non-standard location, pass its executable path with
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["chrome-devtools-mcp@latest", "--executablePath=/path/to/chrome"]
+      "args": [
+        "@chenpx976/chrome-devtools-mcp@latest",
+        "--executablePath=/path/to/chrome"
+      ]
     }
   }
 }
@@ -97,7 +104,7 @@ The following code snippet is an example configuration for gemini-cli:
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["chrome-devtools-mcp@latest", "--autoConnect"]
+      "args": ["@chenpx976/chrome-devtools-mcp@latest", "--autoConnect"]
     }
   }
 }
@@ -137,7 +144,7 @@ Add the `--browser-url` option to your MCP client configuration. The value of th
     "chrome-devtools": {
       "command": "npx",
       "args": [
-        "chrome-devtools-mcp@latest",
+        "@chenpx976/chrome-devtools-mcp@latest",
         "--browser-url=http://127.0.0.1:9222"
       ]
     }

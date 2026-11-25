@@ -1,13 +1,16 @@
 # Chrome DevTools CLI
 
-The `chrome-devtools-mcp` package includes a CLI interface that allows you to interact with the browser directly from your terminal. This is particularly useful for debugging or when you want an agent to generate scripts that automate browser actions.
+The `@chenpx976/chrome-devtools-mcp` package includes the `chrome-devtools` CLI for interacting with the browser from your terminal and writing browser automation scripts.
 
 ## Getting started
+
+The scoped package is **not yet published or verified**. Until publication is
+verified, use the [local build](./arc.md#build-and-configure-the-local-server).
 
 Install the package globally to make the `chrome-devtools` command available:
 
 ```sh
-npm i chrome-devtools-mcp@latest -g
+npm i @chenpx976/chrome-devtools-mcp@latest -g
 chrome-devtools status # check if install worked.
 ```
 
@@ -28,7 +31,7 @@ The [`chrome-devtools-cli`](../skills/chrome-devtools-cli) skill teaches your ag
 ```sh
 # Example for Claude Code. Use the skills directory of your agent.
 mkdir -p ~/.claude/skills
-cp -R "$(npm root -g)/chrome-devtools-mcp/skills/chrome-devtools-cli" ~/.claude/skills/
+cp -R "$(npm root -g)/@chenpx976/chrome-devtools-mcp/skills/chrome-devtools-cli" ~/.claude/skills/
 ```
 
 See [Skills](../README.md#skills) for all skills and installation options.

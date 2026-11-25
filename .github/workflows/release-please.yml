@@ -1,18 +1,21 @@
 on:
   push:
     branches:
-      - main
+      - arc-support
 
-permissions: read-all
+permissions:
+  contents: write
+  pull-requests: write
 name: release-please
 
 jobs:
   release-please:
+    if: github.repository == 'chenpx976/chrome-devtools-mcp'
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v5
         with:
-          token: ${{ secrets.BROWSER_AUTOMATION_BOT_TOKEN }}
-          target-branch: main
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+          target-branch: arc-support
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json

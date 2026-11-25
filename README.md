@@ -1,8 +1,19 @@
-# Chrome DevTools for agents
+# Chrome DevTools for agents — Arc fork
 
-[![npm chrome-devtools-mcp package](https://img.shields.io/npm/v/chrome-devtools-mcp.svg)](https://npmjs.org/package/chrome-devtools-mcp)
+This is the [chenpx976 Arc fork](https://github.com/chenpx976/chrome-devtools-mcp/tree/arc-support),
+maintained on `arc-support`, of
+[ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp).
+It preserves the upstream Chrome DevTools tools and adds opt-in macOS Arc support.
+The npm distribution is `@chenpx976/chrome-devtools-mcp`; executable names remain
+`chrome-devtools-mcp` and `chrome-devtools`.
 
-Chrome DevTools for agents (`chrome-devtools-mcp`) lets your coding agent (such as Antigravity, Claude, Cursor or Copilot)
+**Publication status: not yet published or verified.** The scoped installation
+commands below are for use after the first public release is verified. Until
+then, use the [local build setup](./docs/arc.md#build-and-configure-the-local-server).
+See [publishing and verification](./docs/arc.md#publish-and-verify-the-scoped-package)
+for npm authentication, scope ownership, and release requirements.
+
+Chrome DevTools for agents lets your coding agent (such as Antigravity, Claude, Cursor or Copilot)
 control and inspect a live Chrome browser. It is available as a
 Model-Context-Protocol (MCP) server and as a [CLI][cli]. Both give your AI
 coding assistant access to the full power of Chrome DevTools for reliable
@@ -28,12 +39,14 @@ allowing them to inspect, debug, and modify any data in the browser or DevTools.
 Avoid sharing sensitive or personal information that you don't want to share with
 MCP clients.
 
-`chrome-devtools-mcp` officially supports Google Chrome and [Chrome for Testing](https://developer.chrome.com/blog/chrome-for-testing/) only.
-Other Chromium-based browsers may work, but this is not guaranteed, and you may encounter unexpected behavior. Use at your own discretion.
-We are committed to providing fixes and support for the latest version of [Extended Stable Chrome](https://chromiumdash.appspot.com/schedule).
+The upstream project officially supports Google Chrome and
+[Chrome for Testing](https://developer.chrome.com/blog/chrome-for-testing/).
+This fork adds an opt-in Arc adaptation with support limited to the behavior
+verified on your installed Arc and Chromium versions. Other Chromium-based
+browsers may work, but compatibility is not guaranteed.
 
-For the opt-in macOS Arc adaptation, see [Arc setup](./docs/arc.md), including
-how to run the locally built server and verify browser compatibility.
+See [Arc setup](./docs/arc.md) for local builds, the scoped npm package, and
+browser compatibility verification.
 
 Performance tools may send trace URLs to the Google CrUX API to fetch real-user
 experience data. This helps provide a holistic performance picture by
@@ -48,7 +61,7 @@ Google collects usage statistics (such as tool invocation success rates, latency
 Data collection is **enabled by default**. You can opt-out by passing the `--no-usage-statistics` flag when starting the server:
 
 ```json
-"args": ["-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"]
+"args": ["-y", "@chenpx976/chrome-devtools-mcp@latest", "--no-usage-statistics"]
 ```
 
 Google handles this data in accordance with the [Google Privacy Policy](https://policies.google.com/privacy).
@@ -70,21 +83,25 @@ You can disable these update checks by setting the `CHROME_DEVTOOLS_MCP_NO_UPDAT
 
 ## Getting started
 
-Add the following config to your MCP client:
+After publication is verified, add the following config to your MCP client.
+For Arc, use the [Arc configuration](./docs/arc.md), which adds `--arc` and an
+explicit local debugging endpoint:
 
 ```json
 {
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": ["-y", "@chenpx976/chrome-devtools-mcp@latest"]
     }
   }
 }
 ```
 
 > [!NOTE]
-> Using `chrome-devtools-mcp@latest` ensures that your MCP client will always use the latest version of the Chrome DevTools MCP server.
+> `@chenpx976/chrome-devtools-mcp@latest` follows this fork's latest npm release.
+> Pin a verified version for reproducible setups. Never substitute the official
+> unscoped npm package for an Arc connection.
 
 ### MCP Client configuration
 
@@ -108,7 +125,7 @@ Your MCP client should open the browser and record a performance trace.
 The package also includes the `chrome-devtools` CLI. Use it to control the browser from your terminal without MCP:
 
 ```sh
-npm i chrome-devtools-mcp@latest -g
+npm i @chenpx976/chrome-devtools-mcp@latest -g
 chrome-devtools navigate_page 1 --url "https://developers.chrome.com"
 chrome-devtools take_screenshot 1 --filePath screenshot.png
 chrome-devtools stop
@@ -133,11 +150,16 @@ The package includes [skills](./skills) that teach your agent how to use Chrome 
 
 ### Install skills as a plugin
 
-A plugin installs the MCP server and all skills, including the CLI skill:
+After the scoped package is published, a plugin installs the MCP server and
+all skills, including the CLI skill. Use this fork's `arc-support` revision
+when selecting or checking out the plugin source:
 
-- **Claude Code:** Run `/plugin marketplace add ChromeDevTools/chrome-devtools-mcp`, then `/plugin install chrome-devtools-mcp@chrome-devtools-plugins`.
-- **Copilot / VS Code:** Run **Chat: Install Plugin From Source** and enter `ChromeDevTools/chrome-devtools-mcp`.
-- **Gemini CLI:** Run `gemini extensions install --auto-update https://github.com/ChromeDevTools/chrome-devtools-mcp`.
+- **Claude Code:** Run `/plugin marketplace add https://github.com/chenpx976/chrome-devtools-mcp.git#arc-support`, then `/plugin install chrome-devtools-mcp@chrome-devtools-plugins`.
+- **Copilot / VS Code:** Run **Chat: Install Plugin From Source** and select `chenpx976/chrome-devtools-mcp` at `arc-support`. If the client cannot select a branch, install from a local checkout of that branch.
+- **Gemini CLI:** Run `gemini extensions install --auto-update https://github.com/chenpx976/chrome-devtools-mcp --ref arc-support`.
+
+Plugin server defaults launch the scoped package in Chrome mode. For Arc,
+configure `--arc` and the explicit loopback endpoint as in [Arc setup](./docs/arc.md).
 
 See the [Client Configurations Guide][client-configurations-guide] for more information.
 
@@ -146,10 +168,10 @@ See the [Client Configurations Guide][client-configurations-guide] for more info
 If your agent does not support plugins, copy the skill folders into the skills directory of your agent. The npm package contains the skills:
 
 ```sh
-npm i chrome-devtools-mcp@latest -g
+npm i @chenpx976/chrome-devtools-mcp@latest -g
 # Example for Claude Code. Use the skills directory of your agent.
 mkdir -p ~/.claude/skills
-cp -R "$(npm root -g)/chrome-devtools-mcp/skills/chrome-devtools-cli" ~/.claude/skills/
+cp -R "$(npm root -g)/@chenpx976/chrome-devtools-mcp/skills/chrome-devtools-cli" ~/.claude/skills/
 ```
 
 > [!IMPORTANT]
@@ -163,9 +185,9 @@ Skills describe the tools of a specific version. Update the skills each time you
 - **Manual installs:** Update the package, then copy the skill folders again:
 
 ```sh
-npm i chrome-devtools-mcp@latest -g
+npm i @chenpx976/chrome-devtools-mcp@latest -g
 mkdir -p ~/.claude/skills
-cp -R "$(npm root -g)/chrome-devtools-mcp/skills/chrome-devtools-cli" ~/.claude/skills/
+cp -R "$(npm root -g)/@chenpx976/chrome-devtools-mcp/skills/chrome-devtools-cli" ~/.claude/skills/
 ```
 
 ## Tools

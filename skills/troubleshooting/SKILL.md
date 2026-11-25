@@ -16,6 +16,10 @@ If you find a configuration file, read and interpret it to identify potential is
 - Incorrect arguments or flags.
 - Missing environment variables.
 - Usage of `--autoConnect` in incompatible environments.
+- The actual executable/package identity: preserve this fork's local build or
+  verified `@chenpx976/chrome-devtools-mcp` release. An unscoped official npm
+  command does not provide this Arc adaptation. The scoped package is not yet
+  published or verified; use the local build until release verification.
 
 If you cannot find any of these files, only then should you ask the user to provide their configuration file content.
 
@@ -66,7 +70,7 @@ Identify other error messages from the failed tool call or the MCP initializatio
 
 ### Step 3: Read Known Issues
 
-Read the contents of https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/docs/troubleshooting.md to map the error to a known issue. Pay close attention to:
+Read https://github.com/chenpx976/chrome-devtools-mcp/blob/arc-support/docs/troubleshooting.md to map the error to a known issue. Pay close attention to:
 
 - Sandboxing restrictions (macOS Seatbelt, Linux containers).
 - WSL requirements.
@@ -85,14 +89,19 @@ _If you are unsure of the user's configuration, ask the user to provide their cu
 
 ### Step 5: Run Diagnostic Commands
 
-If the issue is still unclear, run diagnostic commands to test the server directly:
+If the issue is still unclear, test the configured artifact directly. For a
+local build, use its actual `node` entry. For a verified scoped release:
 
-- Run `npx chrome-devtools-mcp@latest --help` to verify the installation and Node.js environment.
-- If you need more information, run `NODE_DEBUG=* npx chrome-devtools-mcp@latest --logFile=/tmp/cdm-test.log` to capture verbose logs. Analyze the output for errors.
+- Run `npx @chenpx976/chrome-devtools-mcp@<verified-version> --help` to check the same package and Node.js environment as the client.
+- If needed, run it with `NODE_DEBUG=*` and `--logFile=/tmp/cdm-test.log`, preserving the configured Arc/endpoint arguments. Analyze errors without switching to the official package or silently launching a different browser.
 
 ### Step 6: Check GitHub for Existing Issues
 
-If https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/docs/troubleshooting.md does not cover the specific error, check if the `gh` (GitHub CLI) tool is available in the environment. If so, search the GitHub repository for similar issues:
-`gh issue list --repo ChromeDevTools/chrome-devtools-mcp --search "<error snippet>" --state all`
+If the fork's troubleshooting guide does not cover the error, search its
+repository when `gh` is available:
+`gh issue list --repo chenpx976/chrome-devtools-mcp --search "<error snippet>" --state all`
 
-Alternatively, you can recommend that the user checks https://github.com/ChromeDevTools/chrome-devtools-mcp/issues and https://github.com/ChromeDevTools/chrome-devtools-mcp/discussions for help.
+For shared Chrome behavior, also consult the actual
+[upstream issues](https://github.com/ChromeDevTools/chrome-devtools-mcp/issues)
+and [discussions](https://github.com/ChromeDevTools/chrome-devtools-mcp/discussions).
+Keep upstream issue citations attached to their original repository.

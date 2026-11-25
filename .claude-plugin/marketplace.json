@@ -1,17 +1,16 @@
 {
   "name": "chrome-devtools-plugins",
   "version": "1.13.0",
-  "description": "Bundled plugins for actuating and debugging the Chrome browser.",
-  "repository": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+  "description": "Arc-compatible distribution of upstream Chrome DevTools plugins.",
+  "repository": "https://github.com/chenpx976/chrome-devtools-mcp",
   "owner": {
-    "name": "Chrome DevTools Team",
-    "email": "devtools-dev@chromium.org"
+    "name": "chenpx976"
   },
   "plugins": [
     {
       "name": "chrome-devtools-mcp",
       "source": "./",
-      "description": "Reliable automation, in-depth debugging, and performance analysis in Chrome using Chrome DevTools and Puppeteer"
+      "description": "Arc-compatible fork of Chrome DevTools for agents, preserving upstream Chrome automation, debugging, and performance analysis"
     }
   ]
 }

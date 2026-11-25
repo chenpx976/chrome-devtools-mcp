@@ -83,6 +83,15 @@ describe('cli args parsing', () => {
     watchConfig: false,
   };
 
+  it('uses the scoped package in CLI help commands', async () => {
+    const help = await new ConfigParser('0.0.0', ['node', 'main.js'])
+      .buildCliParser()
+      .getHelp();
+
+    assert.ok(help.includes('npx @chenpx976/chrome-devtools-mcp@latest'));
+    assert.ok(!help.includes('npx chrome-devtools-mcp@latest'));
+  });
+
   it('parses with default args', async () => {
     const args = parseConfig([]);
     assert.deepStrictEqual(args, {

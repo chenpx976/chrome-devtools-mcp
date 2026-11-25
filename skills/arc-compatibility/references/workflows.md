@@ -9,20 +9,44 @@ checks run during skill authoring. Substitute observed versions and evidence.
 
 1. Resolve upstream's requested branch/tag to an exact commit. Record the old
    patched commit and client config for rollback; preserve unrelated work.
-2. Inspect current browser/config/page ownership. Reapply only opt-in Arc
-   validation, native creation, integration, tests, and documentation.
+2. Inspect current browser/config/page ownership. Reapply opt-in Arc
+   validation, native creation, integration, tests, and documentation. Retain
+   scoped package identity, fork publisher settings, and both binary names.
 3. Run repository sync if dependencies changed, then generation, formatting,
    and the full tests. Keep generated changes in the adaptation.
 4. Run native smoke against the already enabled local Arc endpoint. Compare
    native tab identities and URLs before/after. Exercise foreground and
    background creation and cleanup only tabs created by the smoke.
-5. Point the client to the newly built local entry and restart its MCP server.
-   Inspect its advertised tools and exercise a new page through that client.
+5. Verify the packed artifact when preparing a release. Point the client to
+   the newly built local entry, or after publication install and verify the
+   exact scoped release in a clean directory. Restart its MCP server,
+   inspect advertised tools, and exercise native creation through that client.
 
-**Expected handoff:** exact old/new revisions, actual local executable path,
-observed check results, tested Arc/Chromium versions, feature evidence table,
+**Expected handoff:** exact old/new revisions, scoped package/version, actual
+local or installed executable path, publication status, observed check results,
+tested Arc/Chromium versions, feature evidence table,
 and the retained prior config/build. List advanced features not exercised as
 unverified even if the basic smoke passed.
+
+## Published package setup
+
+**Request:** "Use the published Arc fork instead of a local checkout."
+
+1. Check whether the exact `@chenpx976/chrome-devtools-mcp` version exists
+   publicly and is verified. If unavailable, retain the local config and
+   report the publication prerequisite. Do not fetch official npm as fallback.
+2. Install the exact scoped version into a clean directory; inspect package
+   name/version, integrity, both binaries, and `--arc` help. Configure `npx`
+   with that pinned scoped version or use the installed MCP entry directly.
+3. Pass `--arc` and a loopback endpoint. Preserve telemetry preferences and
+   ensure the endpoint and AppleScript control the same local Arc instance.
+4. Exercise the installed server through the real client. Record native new
+   tab identity, existing-tab preservation, and background selection before
+   switching permanently; retain the previous build/config for rollback.
+
+**Expected handoff:** registry and installed-artifact evidence, pinned client
+configuration, native observations, and precise unverified features. If the
+registry package is absent, report setup blocked and the retained local build.
 
 ## Guarded variant: Arc is running without remote debugging
 
@@ -61,15 +85,17 @@ owned artifacts left behind, repair, rerun evidence, and remaining gaps.
 
 ## Anti-patterns and corrections
 
-| Anti-pattern                                                     | Corrected behavior                                            |
-| ---------------------------------------------------------------- | ------------------------------------------------------------- |
-| Copy the old fork's `McpContext.ts` over current upstream.       | Port only the Arc branch into the current page lifecycle.     |
-| Return the last or blank existing page for `new_page`.           | Create a new native tab and attach by unique marker.          |
-| Fall back to `browser.newPage()` after AppleScript fails.        | Return the native failure without a second creation attempt.  |
-| Configure `npx chrome-devtools-mcp@latest --arc`.                | Run the patched checkout's built entry with `node`.           |
-| Install the skill and keep the plugin's official server command. | Override the Arc server entry to use the local patched build. |
-| Kill Arc to activate remote debugging.                           | Let the user save work and quit/relaunch manually.            |
-| Declare all tools compatible after `list_pages` works.           | Report only exercised features as verified.                   |
+| Anti-pattern                                                 | Corrected behavior                                                 |
+| ------------------------------------------------------------ | ------------------------------------------------------------------ |
+| Copy the old fork's `McpContext.ts` over current upstream.   | Port only the Arc branch into the current page lifecycle.          |
+| Return the last or blank existing page for `new_page`.       | Create a new native tab and attach by unique marker.               |
+| Fall back to `browser.newPage()` after AppleScript fails.    | Return the native failure without a second creation attempt.       |
+| Configure `npx chrome-devtools-mcp@latest --arc`.            | Use the local build or a verified scoped package with `--arc`.     |
+| Restore upstream package names while merging new tools.      | Preserve scoped package and fork publisher identities.             |
+| Claim npm release success from a local build smoke.          | Inspect and exercise a clean installation of the scoped release.   |
+| Install the skill and keep the plugin's default Chrome args. | Add `--arc` and the explicit loopback endpoint to the fork server. |
+| Kill Arc to activate remote debugging.                       | Let the user save work and quit/relaunch manually.                 |
+| Declare all tools compatible after `list_pages` works.       | Report only exercised features as verified.                        |
 
 ## Iterative maintenance
 

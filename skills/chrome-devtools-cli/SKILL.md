@@ -3,7 +3,7 @@ name: chrome-devtools-cli
 description: Use this skill to write shell scripts or run shell commands to automate tasks in the browser or otherwise use Chrome DevTools via CLI.
 ---
 
-The `chrome-devtools-mcp` CLI lets you interact with the browser from your terminal.
+The `@chenpx976/chrome-devtools-mcp` package provides the `chrome-devtools` CLI for interacting with the browser from your terminal.
 
 ## Setup
 

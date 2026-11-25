@@ -16,11 +16,11 @@ ordered flow, boundaries, acceptance checks, failure recovery, handoff, and
 example requirements. Retrieval date: 2026-11-23. Source links to moving
 branches are historical retrieval locations, not pinned future guarantees.
 
-1. **Current repository:** `AGENTS.md`, `CONTRIBUTING.md`, `package.json`,
-   `README.md`, `src/BrowserManager.ts`, `src/McpContext.ts`, and
-   `docs/advanced-usage.md`, in the
+1. **Upstream baseline repository:** `AGENTS.md`, `CONTRIBUTING.md`,
+   `package.json`, `README.md`, `src/BrowserManager.ts`, `src/McpContext.ts`,
+   and `docs/advanced-usage.md`, in the
    [official source tree](https://github.com/ChromeDevTools/chrome-devtools-mcp).
-   Trust tier: canonical for this checkout. Confidence: high. Contribution:
+   Trust tier: canonical for upstream behavior. Confidence: high. Contribution:
    current connection/page ownership, generation/build/test scripts, local
    entry point, source registration rules, and current skills convention.
    Usage constraints: observed package 1.13.0 at upstream revision
@@ -31,7 +31,8 @@ branches are historical retrieval locations, not pinned future guarantees.
    `.gemini/settings.json`, and `skills/chrome-devtools/SKILL.md`.
    Trust tier: canonical. Confidence: high. Contribution: canonical `skills/`
    layout, package inclusion of the entire skills tree, README inventory,
-   and plugin server commands that invoke official npm releases.
+   and the original plugin commands invoking official npm releases; the scoped
+   migration below supersedes those distribution defaults.
    Usage constraints: adding a skill does not modify a running server; no explicit
    skill allowlist was found in inspected manifests.
 3. **Original Arc fork:**
@@ -93,6 +94,19 @@ branches are historical retrieval locations, not pinned future guarantees.
    The smoke explicitly configures its temporary directory as a filesystem
    root. Usage constraints: this does not establish support for advanced CDP
    features or other Arc/Chromium versions.
+10. **Scoped distribution migration, 2026-11-25:** accepted maintenance
+    contract and current
+    [fork](https://github.com/chenpx976/chrome-devtools-mcp/tree/arc-support),
+    package metadata, plugin manifests, and release-workflow configuration.
+    Trust tier: canonical for fork identity. Confidence: high for intended
+    configuration. Contribution: `@chenpx976/chrome-devtools-mcp`, maintained
+    `arc-support`, unchanged binary/plugin names, one package containing both
+    bins, initial public bootstrap, and subsequent GitHub OIDC publisher
+    (`chenpx976`, `chrome-devtools-mcp`, `publish-to-npm-on-tag.yml`).
+    Usage constraints: the scoped registry `/latest` lookup returned HTTP 404
+    and `npm whoami` returned `ENEEDAUTH`; npm identity/scope ownership,
+    publication, OIDC registration, and registry artifact behavior are not
+    verified. Never treat local build evidence as a published result.
 
 ## Decisions
 
@@ -105,9 +119,11 @@ branches are historical retrieval locations, not pinned future guarantees.
   isolation/incognito and preserve background selection. Sources 4 and 5.
 - **Rejected:** reuse blank/last tabs or fall back to CDP tab creation. Source
   3 directly implements these behaviors; source 5 requires true new tabs.
-- **Adopted:** configure the local compiled entry and override plugin npm
-  commands for Arc. Sources 1 and 2 show the local entry and official-server
-  defaults; source 5 requires that patches actually reach the running server.
+- **Adopted:** use a local compiled entry during development or a verified
+  scoped artifact for published installs. Sources 1, 2, and 10 establish the
+  entries; source 5 requires the intended patch to reach the running server.
+  Preserve fork package/publisher identity across upstream updates and never
+  fall back to official npm. Plugin defaults still require explicit Arc args.
 - **Rejected:** unauthorized quit/relaunch or broad CDP compatibility claims.
   Sources 3–5 establish a real user session and version gaps; an explicitly
   authorized normal restart is available through `npm run arc:restart`.
@@ -119,8 +135,8 @@ branches are historical retrieval locations, not pinned future guarantees.
 
 - **Preconditions — complete:** exact revision, runtime versions, local changes,
   config entry point, Arc window, endpoint, and permission checks in SKILL.
-- **Ordered execution — complete:** baseline, narrow port, local runtime,
-  generation/format/full tests/native smoke, client check, then handoff.
+- **Ordered execution — complete:** baseline, narrow port, local/scoped runtime,
+  generation/format/full tests/native smoke, artifact/client check, and handoff.
 - **Safety boundaries — complete:** no unauthorized browser termination, no
   borrowed-tab navigation, local endpoint, no fallback, preserved rollback.
 - **Acceptance/output — complete:** separate check and feature statuses in
@@ -135,6 +151,9 @@ branches are historical retrieval locations, not pinned future guarantees.
 - **Platform/version evidence — partial:** dictionary and current source
   inspected; native acceptance and feature-specific CDP results require live
   execution against recorded versions. Follow the validation phase.
+- **Published artifact — unverified:** npm authentication and scope access are
+  unresolved. Follow `docs/arc.md` to verify login, bootstrap the public scoped
+  release when authorized, configure OIDC, and test a clean installed artifact.
 
 Expansion passes covered core behavior (sources 1/4), failures (3/5), negative
 examples (3), repairs (1/4/5), and platform/version variance (1/4). Retrieval
@@ -146,7 +165,7 @@ need execution on the intended Arc, rather than more general documentation.
 Qualitative authoring review only: required process dimensions and examples
 are represented; no baseline-versus-skill agent runs or quantitative benchmark
 were executed. The concrete improvement over the original fork's documented
-workflow is an explicit native-new-tab contract, local-build client routing,
+workflow is an explicit native-new-tab contract, intended-artifact routing,
 and evidence-limited support reporting. Behavioral improvement is unmeasured.
 
 Should-trigger prompts:
@@ -154,6 +173,8 @@ Should-trigger prompts:
 - "Reapply our Arc patch onto the latest chrome-devtools-mcp."
 - "Adapt current Chrome DevTools MCP to Arc without losing upstream tools."
 - "Configure my locally modified Arc MCP and verify it."
+- "Verify an installed @chenpx976/chrome-devtools-mcp release with Arc."
+- "Merge upstream updates while preserving our scoped npm package."
 
 Should-not-trigger prompts:
 
@@ -165,18 +186,29 @@ Description review: name Arc plus the MCP package and update/setup intent;
 exclude ordinary debugging and unmodified Chrome setup. These are designed
 trigger cases, not observed classifier scores.
 
-Strict-depth skill validation passed as `workflow-process`, with no errors
-or warnings. The native foreground probe passed on the versions recorded in
-source 8. Repository generation and formatting passed. Record full tests and
-integrated native smoke separately after execution. Advanced CDP features
-remain unverified unless individually exercised; do not infer support from
-tool names.
+At initial authoring, strict-depth skill validation passed as
+`workflow-process`, with no errors or warnings. The native foreground probe
+passed on the versions recorded in source 8; generation and formatting also
+passed then. These are historical results, not validation of this scoped
+migration. No scripts, tests, formatters, or skill validator were run for the
+2026-11-25 documentation update. Qualitative review covers preconditions,
+ordered execution, failure handling, package identity, and rollback; designed
+trigger cases now include installed scoped releases and identity-preserving
+upstream updates. Advanced CDP and published-artifact behavior remain
+unverified unless individually exercised.
 
 ## Maintenance
 
 2026-11-23: created the workflow skill, native compatibility contract,
 illustrative workflows, deterministic report, and provenance record. Registered
 in the existing README skill inventory; no manifest allowlist edit required.
+
+2026-11-25: updated the existing `skills/arc-compatibility` workflow and bundled
+references for scoped distribution. Added local-versus-installed routing,
+publication/authentication boundaries, artifact verification, publisher
+identity preservation, and package-version rollback. Retained the canonical
+skill directory, README registration, existing examples, and upstream source
+citations; no new skill registration or additional documentation files.
 
 For each real update, record the exact upstream and patched revisions, changed
 source contracts, actual verification evidence, and newly discovered gaps.

@@ -28,7 +28,7 @@ import {stripTerminalEscapes} from '../utils/logger.js';
 import {hideBin, yargs} from '../third_party/cli.js';
 import type {CallToolResult} from '../third_party/index.js';
 import {checkForUpdates} from '../utils/check-for-updates.js';
-import {VERSION} from '../version.js';
+import {PACKAGE_NAME, VERSION} from '../version.js';
 
 import {
   buildCommand,
@@ -43,7 +43,7 @@ import {ConfigParser} from '../config/ConfigParser.js';
 process.title = 'chrome-devtools';
 
 await checkForUpdates(
-  'Run `npm install -g chrome-devtools-mcp@latest` and `chrome-devtools start` to update and restart the daemon.',
+  `Run \`npm install -g ${PACKAGE_NAME}@latest\` and \`chrome-devtools start\` to update and restart the daemon.`,
 );
 
 const DEFAULT_CLI_ARGS = ['--viaCli'];

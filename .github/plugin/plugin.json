@@ -1,12 +1,12 @@
 {
   "name": "chrome-devtools-mcp",
   "version": "1.13.0",
-  "description": "Reliable automation, in-depth debugging, and performance analysis in Chrome using Chrome DevTools and Puppeteer",
+  "description": "Arc-compatible fork of Chrome DevTools for agents, preserving upstream Chrome automation, debugging, and performance analysis",
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
       "args": [
-        "chrome-devtools-mcp@1.13.0"
+        "@chenpx976/chrome-devtools-mcp@1.13.0"
       ]
     }
   }

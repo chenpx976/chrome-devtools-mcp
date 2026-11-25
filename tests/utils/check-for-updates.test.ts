@@ -6,9 +6,10 @@
 
 import assert from 'node:assert';
 import child_process from 'node:child_process';
-import type {Stats} from 'node:fs';
+import {Stats} from 'node:fs';
 import fs from 'node:fs/promises';
 import os from 'node:os';
+import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import sinon from 'sinon';
@@ -17,13 +18,15 @@ import {
   checkForUpdates,
   resetUpdateCheckFlagForTesting,
 } from '../../src/utils/check-for-updates.js';
-import {VERSION} from '../../src/version.js';
+import {PACKAGE_NAME, VERSION} from '../../src/version.js';
 
 describe('checkForUpdates', () => {
+  let writeFileStub: sinon.SinonStub;
+
   beforeEach(() => {
     sinon.stub(fs, 'mkdir').resolves();
     sinon.stub(fs, 'utimes').resolves();
-    sinon.stub(fs, 'writeFile').resolves();
+    writeFileStub = sinon.stub(fs, 'writeFile').resolves();
   });
 
   afterEach(() => {
@@ -62,11 +65,13 @@ describe('checkForUpdates', () => {
     const warnStub = sinon.stub(console, 'warn');
     const spawnStub = sinon.stub(child_process, 'spawn');
 
-    await checkForUpdates('Run `npm update` to update.');
+    await checkForUpdates(
+      `Run \`npm install ${PACKAGE_NAME}@latest\` to update.`,
+    );
 
-    sinon.assert.calledWith(
+    sinon.assert.calledOnceWithExactly(
       warnStub,
-      sinon.match('Update available: ' + VERSION + ' -> 99.9.9'),
+      `\nUpdate available: ${VERSION} -> 99.9.9\nRun \`npm install @chenpx976/chrome-devtools-mcp@latest\` to update.\n`,
     );
     sinon.assert.notCalled(spawnStub);
   });
@@ -190,5 +195,129 @@ describe('checkForUpdates', () => {
     assert.strictEqual(spawnStub.firstCall.args[2]?.detached, true);
     assert.strictEqual(spawnStub.firstCall.args[2]?.windowsHide, true);
     sinon.assert.calledOnce(unrefSpy);
+  });
+
+  it('ignores the official package cache and initializes a separate fork cache', async () => {
+    sinon.stub(os, 'homedir').returns('/home/user');
+    const officialCachePath = path.join(
+      '/home/user',
+      '.cache',
+      'chrome-devtools-mcp',
+      'latest.json',
+    );
+    const forkCachePath = path.join(
+      '/home/user',
+      '.cache',
+      '@chenpx976',
+      'chrome-devtools-mcp',
+      'latest.json',
+    );
+    const statStub = sinon
+      .stub(fs, 'stat')
+      .rejects(new Error('File not found'));
+    const officialStats = sinon.createStubInstance(Stats);
+    officialStats.mtimeMs = Date.now();
+    statStub.withArgs(officialCachePath).resolves(officialStats);
+    const readFileStub = sinon.stub(fs, 'readFile');
+    readFileStub
+      .withArgs(officialCachePath, 'utf8')
+      .resolves(JSON.stringify({version: '99.9.9'}));
+    const warnStub = sinon.stub(console, 'warn');
+    const child = sinon.createStubInstance(child_process.ChildProcess);
+    const spawnStub = sinon.stub(child_process, 'spawn').returns(child);
+
+    await checkForUpdates(
+      `Run \`npm install ${PACKAGE_NAME}@latest\` to update.`,
+    );
+
+    sinon.assert.calledOnceWithExactly(statStub, forkCachePath);
+    sinon.assert.notCalled(readFileStub);
+    sinon.assert.notCalled(warnStub);
+    sinon.assert.calledOnceWithExactly(
+      writeFileStub,
+      forkCachePath,
+      JSON.stringify({version: VERSION}),
+    );
+    sinon.assert.calledOnceWithExactly(
+      spawnStub,
+      process.execPath,
+      [
+        path.join(
+          import.meta.dirname,
+          '..',
+          '..',
+          'src',
+          'bin',
+          'check-latest-version.js',
+        ),
+        forkCachePath,
+      ],
+      {detached: true, stdio: 'ignore', windowsHide: true},
+    );
+    sinon.assert.calledOnceWithExactly(child.unref);
+  });
+});
+
+describe('check-latest-version', () => {
+  // Module-loading tests must stub dependencies before importing the executable.
+  for (const registry of [undefined, 'https://registry.example.com/npm/']) {
+    it(`fetches the scoped package from ${registry ?? 'the default registry'}`, async () => {
+      const cachePath = path.join('/cache', 'scoped-latest.json');
+      sinon
+        .stub(process, 'argv')
+        .value(['node', 'check-latest-version', cachePath]);
+      const registryStub = sinon.stub(child_process, 'execSync');
+      if (registry) {
+        registryStub.returns(`${registry}\n`);
+      } else {
+        registryStub.throws(new Error('npm not on PATH'));
+      }
+      const fetchStub = sinon
+        .stub(globalThis, 'fetch')
+        .resolves(new Response(JSON.stringify({version: '99.9.9'})));
+      sinon.stub(fs, 'mkdir').resolves();
+      const writeFileStub = sinon.stub(fs, 'writeFile').resolves();
+
+      await import(
+        new URL(
+          `../../src/bin/check-latest-version.js?registry=${registry ? 'custom' : 'default'}`,
+          import.meta.url,
+        ).href
+      );
+
+      sinon.assert.calledOnceWithExactly(
+        fetchStub,
+        `${registry ? 'https://registry.example.com/npm' : 'https://registry.npmjs.org'}/%40chenpx976%2Fchrome-devtools-mcp/latest`,
+      );
+      sinon.assert.calledOnceWithExactly(
+        writeFileStub,
+        cachePath,
+        JSON.stringify({version: '99.9.9'}),
+      );
+    });
+  }
+
+  it('leaves the fork cache unchanged when the scoped package is unpublished', async () => {
+    sinon
+      .stub(process, 'argv')
+      .value(['node', 'check-latest-version', '/cache/latest.json']);
+    sinon.stub(child_process, 'execSync').returns('https://registry.npmjs.org');
+    const fetchStub = sinon
+      .stub(globalThis, 'fetch')
+      .resolves(new Response(null, {status: 404}));
+    const writeFileStub = sinon.stub(fs, 'writeFile').resolves();
+
+    await import(
+      new URL(
+        '../../src/bin/check-latest-version.js?registry=unpublished',
+        import.meta.url,
+      ).href
+    );
+
+    sinon.assert.calledOnceWithExactly(
+      fetchStub,
+      'https://registry.npmjs.org/%40chenpx976%2Fchrome-devtools-mcp/latest',
+    );
+    sinon.assert.notCalled(writeFileStub);
   });
 });

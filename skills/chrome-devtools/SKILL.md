@@ -5,7 +5,7 @@ description: Uses Chrome DevTools via MCP for efficient debugging, troubleshooti
 
 ## Core Concepts
 
-**Browser lifecycle**: Browser starts automatically on first tool call using a persistent Chrome profile. Configure via CLI args in the MCP server configuration: `npx chrome-devtools-mcp@latest --help`.
+**Browser lifecycle**: Chrome starts automatically on the first tool call using a persistent profile. Configure the fork via `npx @chenpx976/chrome-devtools-mcp@latest --help` after publication is verified. Until then, use its local build; never substitute official npm for Arc.
 Additional tooling can be enabled by providing the following flags:
 
 - For extension tooling, use the `--categoryExtensions` flag.
@@ -33,7 +33,7 @@ Note: For `evaluate_script`, `pageId` is required when targeting pages. However,
 ### Tool selection
 
 - **Network mocks**: `mock_network` and `remove_network_mock` require `--categoryNetworkMocks` at server startup.
-- **Arc**: Use a locally patched server with `--arc`; `new_page` creates a native tab, rejects `isolatedContext`, and supports background selection restoration. Verify CDP features against the installed Arc version.
+- **Arc**: Use this fork's local build or verified `@chenpx976/chrome-devtools-mcp` release with `--arc` and a loopback endpoint; `new_page` creates a native tab, rejects `isolatedContext`, and supports background selection restoration. Verify CDP features against the installed Arc version.
 - **Automation/interaction**: `take_snapshot` (text-based, faster, better for automation)
 - **Visual inspection**: `take_screenshot` (when user needs to see visual state)
 - **CSS & Styling inspection**: Use `get_css_styles` to inspect computed styles, matched rules, cascade, and CSS variables (pass `computedProperties` for unmatched defaults). Treat the output as authoritative.
@@ -53,7 +53,10 @@ You can send multiple tool calls in parallel, but maintain correct order: naviga
 >   "mcpServers": {
 >     "chrome-devtools": {
 >       "command": "npx",
->       "args": ["chrome-devtools-mcp@latest", "--categoryExtensions"]
+>       "args": [
+>         "@chenpx976/chrome-devtools-mcp@latest",
+>         "--categoryExtensions"
+>       ]
 >     }
 >   }
 > }
@@ -74,4 +77,4 @@ If `chrome-devtools-mcp` is insufficient, guide users to use Chrome DevTools UI:
 - https://developer.chrome.com/docs/devtools
 - https://developer.chrome.com/docs/devtools/ai-assistance
 
-If there are errors launching `chrome-devtools-mcp` or Chrome, refer to https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/docs/troubleshooting.md.
+If there are errors launching `chrome-devtools-mcp` or Chrome, refer to https://github.com/chenpx976/chrome-devtools-mcp/blob/arc-support/docs/troubleshooting.md.

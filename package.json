@@ -1,8 +1,12 @@
 {
-  "name": "chrome-devtools-mcp",
+  "name": "@chenpx976/chrome-devtools-mcp",
   "version": "1.13.0",
-  "description": "MCP server for Chrome DevTools",
+  "description": "Chrome DevTools MCP with native Arc support on macOS",
   "type": "module",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "bin": {
     "chrome-devtools-mcp": "./out/Default/gen/src/bin/chrome-devtools-mcp.js",
     "chrome-devtools": "./out/Default/gen/src/bin/chrome-devtools.js"
@@ -52,14 +56,14 @@
     "!**/*.stamp",
     "!**/*.d"
   ],
-  "repository": "ChromeDevTools/chrome-devtools-mcp",
+  "repository": "chenpx976/chrome-devtools-mcp",
   "author": "Google LLC",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/ChromeDevTools/chrome-devtools-mcp/issues"
+    "url": "https://github.com/chenpx976/chrome-devtools-mcp/issues"
   },
-  "homepage": "https://github.com/ChromeDevTools/chrome-devtools-mcp#readme",
-  "mcpName": "io.github.ChromeDevTools/chrome-devtools-mcp",
+  "homepage": "https://github.com/chenpx976/chrome-devtools-mcp/tree/arc-support#readme",
+  "mcpName": "io.github.chenpx976/chrome-devtools-mcp",
   "devDependencies": {
     "@blackwell-systems/gcf": "^2.2.2",
     "@google/genai": "^3.0.0",

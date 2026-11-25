@@ -11,7 +11,7 @@ import path from 'node:path';
 import process from 'node:process';
 
 import {semver} from '../third_party/cli.js';
-import {VERSION} from '../version.js';
+import {PACKAGE_NAME, VERSION} from '../version.js';
 
 /**
  * Notifies the user if an update is available.
@@ -33,7 +33,7 @@ export async function checkForUpdates(message: string): Promise<void> {
   const cachePath = path.join(
     os.homedir(),
     '.cache',
-    'chrome-devtools-mcp',
+    PACKAGE_NAME,
     'latest.json',
   );
 

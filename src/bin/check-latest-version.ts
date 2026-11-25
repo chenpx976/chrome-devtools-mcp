@@ -4,10 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {execSync} from 'node:child_process';
+import child_process from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+
+import {PACKAGE_NAME} from '../version.js';
 
 const DEFAULT_REGISTRY = 'https://registry.npmjs.org';
 
@@ -17,12 +19,13 @@ function getRegistry(): string {
   // honors .npmrc files at every scope and respects npm_config_registry,
   // so it covers direct CLI invocations as well as `npx` / `npm run`.
   try {
-    const registry = execSync('npm config get registry', {
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-      timeout: 5000,
-      windowsHide: true,
-    })
+    const registry = child_process
+      .execSync('npm config get registry', {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+        timeout: 5000,
+        windowsHide: true,
+      })
       .trim()
       .replace(/\/$/, '');
     if (registry && registry !== 'undefined' && /^https?:\/\//.test(registry)) {
@@ -38,7 +41,9 @@ const cachePath = process.argv[2];
 
 if (cachePath) {
   try {
-    const response = await fetch(`${getRegistry()}/chrome-devtools-mcp/latest`);
+    const response = await fetch(
+      `${getRegistry()}/${encodeURIComponent(PACKAGE_NAME)}/latest`,
+    );
     const data = response.ok ? await response.json() : null;
 
     if (

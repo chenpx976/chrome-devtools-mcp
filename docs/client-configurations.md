@@ -1,5 +1,11 @@
 # MCP Client configuration
 
+These configurations use the Arc fork's npm distribution,
+`@chenpx976/chrome-devtools-mcp`. It is **not yet published or verified**;
+use the [local build](./arc.md#build-and-configure-the-local-server) until
+publication is verified. For Arc, add `--arc` and an explicit loopback endpoint
+as described in [Arc setup](./arc.md). Plugin sources must use `arc-support`.
+
 <!--
 When adding a new client configuration, make sure to add it in alphabetical order.
 -->
@@ -10,7 +16,7 @@ When adding a new client configuration, make sure to add it in alphabetical orde
 Follow https://ampcode.com/manual#mcp and use the [standard config][standard-config]. You can also install the Chrome DevTools MCP server using the CLI:
 
 ```bash
-amp mcp add chrome-devtools -- npx chrome-devtools-mcp@latest
+amp mcp add chrome-devtools -- npx @chenpx976/chrome-devtools-mcp@latest
 ```
 
 </details>
@@ -27,7 +33,7 @@ To use the Chrome DevTools MCP server follow the instructions from <a href="http
       "command": "npx",
       "args": [
         "-y",
-        "chrome-devtools-mcp@latest",
+        "@chenpx976/chrome-devtools-mcp@latest",
         "--browser-url=http://127.0.0.1:9222"
       ]
     }
@@ -53,7 +59,7 @@ Follow the <a href="https://bob.ibm.com/docs/ide/configuration/mcp/mcp-in-bob">I
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": ["-y", "@chenpx976/chrome-devtools-mcp@latest"]
     }
   }
 }
@@ -71,7 +77,7 @@ You can edit these files from **Bob panel → Settings → MCP → Edit Global M
 Use the Claude Code CLI to add the Chrome DevTools MCP server (<a href="https://code.claude.com/docs/en/mcp">guide</a>):
 
 ```bash
-claude mcp add chrome-devtools --scope user npx chrome-devtools-mcp@latest
+claude mcp add chrome-devtools --scope user npx @chenpx976/chrome-devtools-mcp@latest
 ```
 
 **Install as a Plugin (MCP + Skills)**
@@ -82,7 +88,7 @@ claude mcp add chrome-devtools --scope user npx chrome-devtools-mcp@latest
 To install Chrome DevTools MCP with skills, add the marketplace registry in Claude Code:
 
 ```sh
-/plugin marketplace add ChromeDevTools/chrome-devtools-mcp
+/plugin marketplace add https://github.com/chenpx976/chrome-devtools-mcp.git#arc-support
 ```
 
 Then, install the plugin:
@@ -112,7 +118,7 @@ Follow the <a href="https://developers.openai.com/codex/mcp/#configure-with-the-
 using the [standard config][standard-config]. You can also install the Chrome DevTools MCP server using the Codex CLI:
 
 ```bash
-codex mcp add chrome-devtools -- npx chrome-devtools-mcp@latest
+codex mcp add chrome-devtools -- npx @chenpx976/chrome-devtools-mcp@latest
 ```
 
 **On Windows 11**
@@ -126,7 +132,7 @@ args = [
     "/c",
     "npx",
     "-y",
-    "chrome-devtools-mcp@latest",
+    "@chenpx976/chrome-devtools-mcp@latest",
 ]
 env = { SystemRoot="C:\\Windows", PROGRAMFILES="C:\\Program Files" }
 startup_timeout_ms = 20_000
@@ -140,7 +146,7 @@ startup_timeout_ms = 20_000
 Use the Command Code CLI to add the Chrome DevTools MCP server (<a href="https://commandcode.ai/docs/mcp">MCP guide</a>):
 
 ```bash
-cmd mcp add chrome-devtools --scope user npx chrome-devtools-mcp@latest
+cmd mcp add chrome-devtools --scope user npx @chenpx976/chrome-devtools-mcp@latest
 ```
 
 </details>
@@ -164,7 +170,7 @@ Configure the following fields and press `CTRL+S` to save the configuration:
 
 - **Server name:** `chrome-devtools`
 - **Server Type:** `[1] Local`
-- **Command:** `npx -y chrome-devtools-mcp@latest`
+- **Command:** `npx -y @chenpx976/chrome-devtools-mcp@latest`
 
 </details>
 
@@ -179,7 +185,7 @@ and the expert guidance it needs to use them effectively.
 
 1.  Open the **Command Palette** (`Cmd+Shift+P` on macOS or `Ctrl+Shift+P` on Windows/Linux).
 2.  Search for and run the **Chat: Install Plugin From Source** command.
-3.  Paste in our repository name: `ChromeDevTools/chrome-devtools-mcp`.
+3.  Select `chenpx976/chrome-devtools-mcp` at `arc-support`. If branch selection is unavailable, install from a local checkout of `arc-support`.
 
 That's it! Your agent is now supercharged with Chrome DevTools capabilities.
 
@@ -189,9 +195,9 @@ That's it! Your agent is now supercharged with Chrome DevTools capabilities.
 
 **Click the button to install:**
 
-[<img src="https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF" alt="Install in VS Code">](https://vscode.dev/redirect/mcp/install?name=io.github.ChromeDevTools%2Fchrome-devtools-mcp&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22chrome-devtools-mcp%22%5D%2C%22env%22%3A%7B%7D%7D)
+[<img src="https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF" alt="Install in VS Code">](https://vscode.dev/redirect/mcp/install?name=io.github.chenpx976%2Fchrome-devtools-mcp&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40chenpx976%2Fchrome-devtools-mcp%40latest%22%5D%2C%22env%22%3A%7B%7D%7D)
 
-[<img src="https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5" alt="Install in VS Code Insiders">](https://insiders.vscode.dev/redirect?url=vscode-insiders%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522io.github.ChromeDevTools%252Fchrome-devtools-mcp%2522%252C%2522config%2522%253A%257B%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522chrome-devtools-mcp%2522%255D%252C%2522env%2522%253A%257B%257D%257D%257D)
+[<img src="https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5" alt="Install in VS Code Insiders">](https://insiders.vscode.dev/redirect?url=vscode-insiders%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522io.github.chenpx976%252Fchrome-devtools-mcp%2522%252C%2522config%2522%253A%257B%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522%2540chenpx976%252Fchrome-devtools-mcp%2540latest%2522%255D%252C%2522env%2522%253A%257B%257D%257D%257D)
 
 **Or install manually:**
 
@@ -200,25 +206,19 @@ Follow the VS Code [MCP configuration guide](https://code.visualstudio.com/docs/
 For macOS and Linux:
 
 ```bash
-code --add-mcp '{"name":"io.github.ChromeDevTools/chrome-devtools-mcp","command":"npx","args":["-y","chrome-devtools-mcp"],"env":{}}'
+code --add-mcp '{"name":"io.github.chenpx976/chrome-devtools-mcp","command":"npx","args":["-y","@chenpx976/chrome-devtools-mcp@latest"],"env":{}}'
 ```
 
 For Windows (PowerShell):
 
 ```powershell
-code --add-mcp '{"""name""":"""io.github.ChromeDevTools/chrome-devtools-mcp""","""command""":"""npx""","""args""":["""-y""","""chrome-devtools-mcp"""]}'
+code --add-mcp '{"""name""":"""io.github.chenpx976/chrome-devtools-mcp""","""command""":"""npx""","""args""":["""-y""","""@chenpx976/chrome-devtools-mcp@latest"""]}'
 ```
 
 </details>
 
 <details>
   <summary>Cursor</summary>
-
-**Click the button to install:**
-
-[<img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Install in Cursor">](https://cursor.com/en/install-mcp?name=chrome-devtools&config=eyJjb21tYW5kIjoibnB4IC15IGNocm9tZS1kZXZ0b29scy1tY3BAbGF0ZXN0In0%3D)
-
-**Or install manually:**
 
 Go to `Cursor Settings` -> `MCP` -> `New MCP Server`. Use the [standard config][standard-config].
 
@@ -232,7 +232,7 @@ Go to `Cursor Settings` -> `MCP` -> `New MCP Server`. Use the [standard config][
 Use the Devin CLI to add the Chrome DevTools MCP server (<a href="https://docs.devin.ai/cli/extensibility/mcp/configuration">guide</a>):
 
 ```bash
-devin mcp add chrome-devtools -- npx chrome-devtools-mcp@latest
+devin mcp add chrome-devtools -- npx @chenpx976/chrome-devtools-mcp@latest
 ```
 
 </details>
@@ -242,7 +242,7 @@ devin mcp add chrome-devtools -- npx chrome-devtools-mcp@latest
 Use the Factory CLI to add the Chrome DevTools MCP server (<a href="https://docs.factory.ai/cli/configuration/mcp">guide</a>):
 
 ```bash
-droid mcp add chrome-devtools "npx -y chrome-devtools-mcp@latest"
+droid mcp add chrome-devtools "npx -y @chenpx976/chrome-devtools-mcp@latest"
 ```
 
 </details>
@@ -254,10 +254,10 @@ To connect [FLUJO](https://flujo.com.co/) to an existing Chrome instance, first
 [start Chrome with remote debugging enabled](./advanced-usage.md#manual-connection-using-port-forwarding).
 Use the debugging port from that setup in the argument below.
 
-1. With Node.js installed, run `npm install chrome-devtools-mcp@latest` in a local directory.
+1. With Node.js installed, run `npm install @chenpx976/chrome-devtools-mcp@latest` in a local directory.
 2. In FLUJO, open **Connected Apps > Connect App > I'm an expert > Configure & Test**.
 3. Set **Server name** to `chrome-devtools` and **MCP server root path** to the directory containing the installed package.
-4. Select **Standard IO** and set **Run command** to `npx`. Use **Add argument** to enter `-y`, `chrome-devtools-mcp@latest`, and `--browser-url=http://127.0.0.1:9222` as separate arguments, adjusting the port if needed.
+4. Select **Standard IO** and set **Run command** to `npx`. Use **Add argument** to enter `-y`, `@chenpx976/chrome-devtools-mcp@latest`, and `--browser-url=http://127.0.0.1:9222` as separate arguments, adjusting the port if needed.
 5. Click **3) Test run**. After the MCP handshake succeeds, click **Add server**.
 6. Open the saved server's **Tools** tab. Use **Test tool** to call `new_page` with the URL you want to debug, then call `take_snapshot` with the returned page ID to verify browser access.
 
@@ -271,15 +271,15 @@ Install the Chrome DevTools MCP server using the Gemini CLI.
 
 ```bash
 # Either MCP only:
-gemini mcp add chrome-devtools npx chrome-devtools-mcp@latest
+gemini mcp add chrome-devtools npx @chenpx976/chrome-devtools-mcp@latest
 # Or as a Gemini extension (MCP+Skills):
-gemini extensions install --auto-update https://github.com/ChromeDevTools/chrome-devtools-mcp
+gemini extensions install --auto-update https://github.com/chenpx976/chrome-devtools-mcp --ref arc-support
 ```
 
 **Globally:**
 
 ```bash
-gemini mcp add -s user chrome-devtools npx chrome-devtools-mcp@latest
+gemini mcp add -s user chrome-devtools npx @chenpx976/chrome-devtools-mcp@latest
 ```
 
 Alternatively, follow the <a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md#how-to-set-up-your-mcp-server">MCP guide</a> and use the [standard config][standard-config].
@@ -298,7 +298,7 @@ using the [standard config][standard-config].
   <summary>Grok Build CLI</summary>
 
 ```bash
-grok mcp add chrome-devtools npx chrome-devtools-mcp@latest
+grok mcp add chrome-devtools npx @chenpx976/chrome-devtools-mcp@latest
 ```
 
 See the <a href="https://docs.x.ai/build/features/skills-plugins-marketplaces">docs</a> for more options
@@ -331,7 +331,7 @@ The Chrome DevTools MCP server can be used with <a href="https://docs.katalon.co
 **Step 2:** Start the Chrome DevTools MCP server with the proxy:
 
 ```bash
-mcp-proxy --transport streamablehttp --port 8080 -- npx -y chrome-devtools-mcp@latest
+mcp-proxy --transport streamablehttp --port 8080 -- npx -y @chenpx976/chrome-devtools-mcp@latest
 ```
 
 **Note:** You may need to pick another port if 8080 is already in use.
@@ -355,7 +355,7 @@ Add in ~/.vibe/config.toml:
 name = "chrome-devtools"
 transport = "stdio"
 command = "npx"
-args = ["chrome-devtools-mcp@latest"]
+args = ["@chenpx976/chrome-devtools-mcp@latest"]
 ```
 
 </details>
@@ -371,7 +371,7 @@ Add the following configuration to your `opencode.json` file. If you don't have 
   "mcp": {
     "chrome-devtools": {
       "type": "local",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
+      "command": ["npx", "-y", "@chenpx976/chrome-devtools-mcp@latest"]
     }
   }
 }
@@ -385,7 +385,7 @@ Add the following configuration to your `opencode.json` file. If you don't have 
 Install the Chrome DevTools MCP server using the Pi CLI (<a href="https://pi.dev/docs/latest/mcp">MCP guide</a>):
 
 ```bash
-pi mcp add chrome-devtools -- npx -y chrome-devtools-mcp@latest
+pi mcp add chrome-devtools -- npx -y @chenpx976/chrome-devtools-mcp@latest
 pi mcp list
 ```
 
@@ -410,13 +410,13 @@ Install the Chrome DevTools MCP server using the Qoder CLI (<a href="https://doc
 **Project wide:**
 
 ```bash
-qodercli mcp add chrome-devtools -- npx chrome-devtools-mcp@latest
+qodercli mcp add chrome-devtools -- npx @chenpx976/chrome-devtools-mcp@latest
 ```
 
 **Globally:**
 
 ```bash
-qodercli mcp add -s user chrome-devtools -- npx chrome-devtools-mcp@latest
+qodercli mcp add -s user chrome-devtools -- npx @chenpx976/chrome-devtools-mcp@latest
 ```
 
 </details>
@@ -426,7 +426,7 @@ qodercli mcp add -s user chrome-devtools -- npx chrome-devtools-mcp@latest
 
 **Click the button to install:**
 
-[<img src="https://img.shields.io/badge/Visual_Studio-Install-C16FDE?logo=visualstudio&logoColor=white" alt="Install in Visual Studio">](https://vs-open.link/mcp-install?%7B%22name%22%3A%22chrome-devtools%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22chrome-devtools-mcp%40latest%22%5D%7D)
+[<img src="https://img.shields.io/badge/Visual_Studio-Install-C16FDE?logo=visualstudio&logoColor=white" alt="Install in Visual Studio">](https://vs-open.link/mcp-install?%7B%22name%22%3A%22chrome-devtools%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22%40chenpx976%2Fchrome-devtools-mcp%40latest%22%5D%7D)
 
 </details>
 
@@ -445,4 +445,4 @@ using the [standard config][standard-config].
 
 </details>
 
-[standard-config]: https://github.com/ChromeDevTools/chrome-devtools-mcp#getting-started
+[standard-config]: ../README.md#getting-started

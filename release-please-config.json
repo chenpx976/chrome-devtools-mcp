@@ -15,6 +15,9 @@
 
   "packages": {
     ".": {
+      "package-name": "@chenpx976/chrome-devtools-mcp",
+      "component": "chrome-devtools-mcp",
+      "include-component-in-tag": true,
       "extra-files": [
         {
           "type": "generic",

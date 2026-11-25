@@ -15,6 +15,7 @@ import {
   type InferredOptionTypes,
 } from '../third_party/cli.js';
 import {getErrorMessage} from '../utils/errorHandling.js';
+import {PACKAGE_NAME} from '../version.js';
 
 import {ConfigLocator} from './ConfigLocator.js';
 import {
@@ -58,7 +59,7 @@ export class ConfigParser {
   ): Argv<InferredOptionTypes<Record<string, YargsOptions>>> {
     const yargsInstance = yargs(hideBin(this.argv));
     return yargsInstance
-      .scriptName('npx chrome-devtools-mcp@latest')
+      .scriptName(`npx ${PACKAGE_NAME}@latest`)
       .parserConfiguration({
         'strip-aliased': true,
         'strip-dashed': true,

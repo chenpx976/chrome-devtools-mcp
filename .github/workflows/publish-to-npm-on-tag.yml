@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   publish-to-npm:
+    if: github.repository == 'chenpx976/chrome-devtools-mcp'
     runs-on: ubuntu-latest
     permissions:
       id-token: write # Required for OIDC
@@ -28,6 +29,9 @@ jobs:
           node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Update npm for trusted publishing
+        run: npm install --global npm@11
+
       - name: Install and sync dependencies
         shell: bash
         run: npm run sync
@@ -35,18 +39,8 @@ jobs:
       - name: Build
         run: npm run build:release
 
-      - name: Publish chrome-devtools-mcp
-        run: |
-          npm publish --provenance --access public
+      - name: Verify npm package
+        run: npm run verify-npm-package
 
-      - name: Publish chrome-devtools
-        run: |
-          node --input-type=module --eval '
-            import * as fs from "node:fs/promises";
-            const json = await fs.readFile("package.json", "utf8");
-            const pkg = JSON.parse(json);
-            pkg.name = "chrome-devtools";
-            await fs.writeFile("package.json", JSON.stringify(pkg, null, 2) + "\n");
-          '
-          echo 'This is the **Chrome DevTools for agents** package. Docs: https://github.com/ChromeDevTools/chrome-devtools-mcp' > README.md
-          npm publish --provenance --access public
+      - name: Publish scoped Arc package
+        run: npm publish --provenance --access public
