@@ -2,9 +2,9 @@
 
 This is an experimental feature as Puppeteer does not officially support Chrome on Android as a target.
 
-The scoped npm package in the example is not yet published or verified. Use
-the [local build](./arc.md#build-and-configure-the-local-server) until a public
-release is verified; Android setup still targets Chrome, without `--arc`.
+The example uses `@chenpx976/chrome-devtools-mcp`; see its
+[release status](./arc.md#use-the-published-scoped-package).
+Android setup targets Chrome, without `--arc`.
 
 The workflow below works for most users. See [Troubleshooting: DevTools is not detecting the Android device for more help](https://developer.chrome.com/docs/devtools/remote-debugging#troubleshooting) for more help.
 

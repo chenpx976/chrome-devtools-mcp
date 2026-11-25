@@ -109,13 +109,13 @@ client starts the intended build or the verified scoped package below.
 
 ## Use the published scoped package
 
-**Status: not yet published or verified.** Version `1.13.0` is the intended
-first scoped release. The registry's scoped `/latest` lookup returned HTTP
-404, and `npm whoami` returned `ENEEDAUTH`. npm account identity and ownership
-of `@chenpx976` have not been verified. Use the local build until the first
-public publish and installed-artifact checks pass.
+**Status: `1.13.0` published and verified on 2026-11-25.** The public registry
+artifact matches the validated release tarball. Installation from npm into a
+clean temporary directory passed both executable help checks and the Arc
+smoke: native tab creation, snapshot, script, console, network, screenshot,
+and tab closure. The authenticated publishing account is `chenpx976`.
 
-After that verification, configure your MCP client with a pinned version:
+Configure your MCP client with a pinned version:
 
 ```json
 {
@@ -145,16 +145,17 @@ package. The MCP/tool names and CLI commands stay unchanged.
 
 ## Publish and verify the scoped package
 
-Publication is a maintainer action; the instructions below do not indicate
-that a release has already been published. Do not change the status above or
-in the README until the registry and installed artifact have been verified.
+Publication is a maintainer action. Update the release status only after
+verifying the registry and installed artifact. npm may accept a publish while
+the version is still processing; wait until that exact version is available.
 
 1. Run `npm login --registry=https://registry.npmjs.org`, then `npm whoami`
    against that registry. Confirm the authenticated npm account owns the
    `chenpx976` user scope or has permission to publish in that organization
    scope. A GitHub username or repository ownership does not grant npm scope
    ownership. Resolve authentication/scope failures before publishing; never
-   fall back to the official unscoped package.
+   fall back to the official unscoped package. Enable account 2FA and complete
+   the browser authorization when publishing interactively.
 2. From the intended `arc-support` release checkout, retain version `1.13.0`
    for the first release. Complete generation, formatting, tests, Arc smoke,
    and release build; run `npm run verify-npm-package` on the packed artifact.

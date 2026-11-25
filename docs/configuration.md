@@ -1,8 +1,7 @@
 # Configuration
 
-Package launch examples require a verified release of
-`@chenpx976/chrome-devtools-mcp`. It is not yet published or verified; use the
-[local build](./arc.md#build-and-configure-the-local-server) until then.
+Package launch examples use `@chenpx976/chrome-devtools-mcp`. See
+[Arc setup and release status](./arc.md#use-the-published-scoped-package).
 
 The Chrome DevTools MCP server supports the following configuration option:
 

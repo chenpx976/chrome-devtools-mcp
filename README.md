@@ -7,9 +7,9 @@ It preserves the upstream Chrome DevTools tools and adds opt-in macOS Arc suppor
 The npm distribution is `@chenpx976/chrome-devtools-mcp`; executable names remain
 `chrome-devtools-mcp` and `chrome-devtools`.
 
-**Publication status: not yet published or verified.** The scoped installation
-commands below are for use after the first public release is verified. Until
-then, use the [local build setup](./docs/arc.md#build-and-configure-the-local-server).
+**Publication status: `1.13.0` published and verified on 2026-11-25.**
+The scoped installation commands below are ready to use. For development, use
+the [local build setup](./docs/arc.md#build-and-configure-the-local-server).
 See [publishing and verification](./docs/arc.md#publish-and-verify-the-scoped-package)
 for npm authentication, scope ownership, and release requirements.
 

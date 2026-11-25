@@ -1,9 +1,9 @@
 # MCP Client configuration
 
 These configurations use the Arc fork's npm distribution,
-`@chenpx976/chrome-devtools-mcp`. It is **not yet published or verified**;
-use the [local build](./arc.md#build-and-configure-the-local-server) until
-publication is verified. For Arc, add `--arc` and an explicit loopback endpoint
+`@chenpx976/chrome-devtools-mcp`. See its
+[release status](./arc.md#use-the-published-scoped-package).
+For Arc, add `--arc` and an explicit loopback endpoint
 as described in [Arc setup](./arc.md). Plugin sources must use `arc-support`.
 
 <!--

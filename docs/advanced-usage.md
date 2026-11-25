@@ -1,8 +1,7 @@
 # Advanced usage
 
-The scoped package examples below require a verified public release. The
-package is not yet published or verified; use the
-[local build](./arc.md#build-and-configure-the-local-server) until then.
+The examples use `@chenpx976/chrome-devtools-mcp`. See
+[Arc setup and release status](./arc.md#use-the-published-scoped-package).
 
 ## Concurrent sessions
 

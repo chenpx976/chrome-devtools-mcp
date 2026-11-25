@@ -4,8 +4,8 @@ The `@chenpx976/chrome-devtools-mcp` package includes the `chrome-devtools` CLI 
 
 ## Getting started
 
-The scoped package is **not yet published or verified**. Until publication is
-verified, use the [local build](./arc.md#build-and-configure-the-local-server).
+See [release status](./arc.md#use-the-published-scoped-package) or use a
+[local build](./arc.md#build-and-configure-the-local-server).
 
 Install the package globally to make the `chrome-devtools` command available:
 

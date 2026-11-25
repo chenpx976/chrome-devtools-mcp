@@ -1,8 +1,8 @@
 # Troubleshooting
 
-The fork's scoped npm package is **not yet published or verified**. Until its
-first release is verified, use the [local build](./arc.md#build-and-configure-the-local-server)
-for the commands below. Never replace it with the official npm package for Arc.
+The commands below use `@chenpx976/chrome-devtools-mcp`; see its
+[release status](./arc.md#use-the-published-scoped-package).
+Never replace it with the official npm package for Arc.
 
 ## General tips
 
