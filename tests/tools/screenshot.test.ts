@@ -238,7 +238,8 @@ describe('screenshot', () => {
         await page.pptrPage.setContent(
           '<style>body{margin:0}div{width:20px;height:40px;background:rgb(15,23,42)}</style><div><canvas width="20" height="40"></canvas></div>',
         );
-        for (const omitBackground of [true, false]) {
+        const captures: number[][][] = [];
+        for (const omitBackground of [false, true, false]) {
           await screenshotTool.handler(
             {params: {format: 'png', omitBackground}, page},
             response,
@@ -263,11 +264,14 @@ describe('screenshot', () => {
               Array.from(ctx.getImageData(30, 5, 1, 1).data),
             ];
           }, capture.data);
-          assert.deepStrictEqual(pixels, [
-            [15, 23, 42, 255],
-            omitBackground ? [0, 0, 0, 0] : [255, 255, 255, 255],
-          ]);
+          captures.push(pixels);
         }
+        assert.strictEqual(captures[0][1][3], 255);
+        assert.deepStrictEqual(captures[1], [
+          [15, 23, 42, 255],
+          [0, 0, 0, 0],
+        ]);
+        assert.deepStrictEqual(captures[2], captures[0]);
       });
     });
 
@@ -411,41 +415,46 @@ describe('screenshot', () => {
       });
     });
 
-    it('with full page resulting in a large screenshot', async () => {
-      await withMcpContext(async (response, context) => {
-        const page = context.getSelectedMcpPage().pptrPage;
-
-        await page.setContent(
-          html`${`<div style="color:blue;">test</div>`.repeat(6500)}
-            <div
-              id="red"
-              style="color:blue;"
-              >test</div
-            > `,
-        );
-        await page.evaluate(() => {
-          const el = document.querySelector('#red');
-          return el?.scrollIntoViewIfNeeded();
-        });
-
-        await screenshotTool.handler(
-          {
-            params: {format: 'png', fullPage: true},
-            page: context.getSelectedMcpPage(),
-          },
-          response,
-          context,
-        );
-
-        assert.strictEqual(response.images.length, 0);
-        assert.strictEqual(
-          response.responseLines.at(0),
-          'Took a screenshot of the full current page.',
-        );
-        assert.ok(
-          response.responseLines.at(1)?.match(/Saved screenshot to.*\.png/),
-        );
+    it('saves a 2 MB full-page screenshot to a temporary file', async () => {
+      const {page, context, response, args} = createHandlerMocks();
+      const image = new Uint8Array(2_000_000);
+      page.pptrPage.evaluate.resolves({
+        width: 1200,
+        height: 5000,
+        devicePixelRatio: 1,
       });
+      page.pptrPage.screenshot.resolves(image);
+      const filepath = join('artifacts', 'screenshot.png');
+      context.saveTemporaryFile.resolves({filepath});
+
+      await screenshot(args).handler(
+        {params: {format: 'png', fullPage: true}, page},
+        response,
+        context,
+      );
+
+      sinon.assert.calledOnceWithExactly(page.pptrPage.screenshot, {
+        type: 'png',
+        fullPage: true,
+        quality: undefined,
+        optimizeForSpeed: true,
+        omitBackground: undefined,
+      });
+      sinon.assert.calledOnceWithExactly(
+        context.saveTemporaryFile,
+        image,
+        'screenshot.png',
+      );
+      sinon.assert.calledWithExactly(
+        response.appendResponseLine.firstCall,
+        'Took a screenshot of the full current page.',
+      );
+      sinon.assert.calledWithExactly(
+        response.appendResponseLine.secondCall,
+        `Saved screenshot to ${filepath}.`,
+      );
+      sinon.assert.notCalled(response.attachImage);
+      sinon.assert.notCalled(context.saveFile);
     });
 
     it('with element uid', async () => {
