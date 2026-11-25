@@ -5,6 +5,7 @@
  */
 
 import assert from 'node:assert';
+import childProcess from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -124,6 +125,78 @@ describe('McpContext', () => {
       Locator,
     );
   }
+
+  it('lists suspended Arc tabs without initializing an unrelated page', async () => {
+    sinon.stub(process, 'platform').value('darwin');
+    const init = sinon
+      .stub(McpPage.prototype, 'init')
+      .rejects(new Error('Suspended tab'));
+    const {target} = createPageTarget();
+    const context = await createMockContext({
+      targets: [target],
+      config: createMockServerConfig({
+        arc: true,
+        browserUrl: 'http://127.0.0.1:9222',
+      }),
+    });
+    try {
+      const pages = await context.createPagesSnapshot();
+      assert.strictEqual(pages[0].target, target);
+      sinon.assert.notCalled(init);
+    } finally {
+      context.dispose();
+    }
+  });
+
+  it('registers a native Arc page without creating a CDP target', async () => {
+    sinon.stub(process, 'platform').value('darwin');
+    sinon
+      .stub(childProcess, 'execFile')
+      .yields(null, 'window-id\ntab-id\n', '');
+    const browser = createMockPuppeteerBrowser();
+    const {page: pptrPage, target} = createPageTarget();
+    const context = await createMockContext({
+      browser,
+      config: createMockServerConfig({
+        arc: true,
+        browserUrl: 'http://127.0.0.1:9222',
+      }),
+    });
+    browser.waitForTarget.resolves(target);
+    browser.targets.returns([target]);
+    try {
+      const page = await context.newPage(true);
+      assert.strictEqual(page.pptrPage, pptrPage);
+      assert.strictEqual(context.getPageById(page.id), page);
+      assert.strictEqual(context.getSelectedMcpPage(), page);
+      sinon.assert.notCalled(browser.newPage);
+      sinon.assert.notCalled(browser.createBrowserContext);
+    } finally {
+      context.dispose();
+    }
+  });
+
+  it('discards a native Arc tab if the context disconnects during creation', async () => {
+    sinon.stub(process, 'platform').value('darwin');
+    sinon.stub(childProcess, 'execFile').yields(null, '', '');
+    const browser = createMockPuppeteerBrowser();
+    const {page: pptrPage, target} = createPageTarget();
+    pptrPage.close.resolves();
+    const context = await createMockContext({
+      browser,
+      config: createMockServerConfig({
+        arc: true,
+        browserUrl: 'http://127.0.0.1:9222',
+      }),
+    });
+    browser.waitForTarget.callsFake(async () => {
+      context.dispose();
+      return target;
+    });
+    await assert.rejects(context.newPage(), /connection changed/);
+    sinon.assert.calledOnceWithExactly(pptrPage.close);
+    sinon.assert.notCalled(browser.newPage);
+  });
 
   describe('getServiceWorkerConsoleData', () => {
     it('resolves the service worker ID to the collector extension ID', async () => {

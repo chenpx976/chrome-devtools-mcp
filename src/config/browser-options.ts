@@ -7,6 +7,7 @@
 import type {McpOptionsFor} from './category-options.js';
 
 export interface BrowserArguments {
+  arc: boolean;
   autoConnect: boolean;
   browserUrl?: string;
   wsEndpoint?: string;
@@ -24,6 +25,12 @@ export interface BrowserArguments {
 export type BrowserOptions = McpOptionsFor<BrowserArguments>;
 
 export const browserOptions: BrowserOptions = {
+  arc: {
+    type: 'boolean',
+    description:
+      'Connect to Arc on macOS using an explicit loopback browserUrl or wsEndpoint. Creates new tabs through AppleScript; requires Automation permission for Arc. Conflicts with autoConnect, headless, executablePath, isolated, userDataDir and explicit channel.',
+    default: false,
+  },
   autoConnect: {
     type: 'boolean',
     description:

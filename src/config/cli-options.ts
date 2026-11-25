@@ -1677,7 +1677,7 @@ export const commands: Commands = {
         name: 'isolatedContext',
         type: 'string',
         description:
-          'If specified, the page is created in an isolated browser context with the given name. Pages in the same browser context share cookies and storage. Pages in different browser contexts are fully isolated (useful for clean-slate testing of cookies and authentication).',
+          'If specified, the page is created in an isolated browser context with the given name. Pages in the same browser context share cookies and storage. Pages in different browser contexts are fully isolated (useful for clean-slate testing of cookies and authentication). Not supported with --arc.',
         required: false,
         positional: false,
       },

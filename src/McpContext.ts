@@ -10,6 +10,7 @@ import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {isDeepStrictEqual} from 'node:util';
 
+import {createArcPage} from './ArcBrowser.js';
 import {overrideDevToolsGlobals} from './devtools/DevtoolsUtils.js';
 import type {
   HeapSnapshotManager,
@@ -596,8 +597,15 @@ export class McpContext implements Context, BrowserlessContext {
     background?: boolean,
     isolatedContextName?: string,
   ): Promise<McpPage> {
+    const browser = this.browser;
     let page: Page;
-    if (isolatedContextName !== undefined) {
+    if (this.#config.resolved.arc) {
+      page = await createArcPage(browser, {background, isolatedContextName});
+      if (this.#browser !== browser || !browser.connected) {
+        await page.close().catch(() => {});
+        throw new Error('Arc connection changed while creating a tab.');
+      }
+    } else if (isolatedContextName !== undefined) {
       let ctx = this.#isolatedContexts.get(isolatedContextName);
       if (!ctx) {
         ctx = await this.browser.createBrowserContext();
@@ -986,8 +994,12 @@ export class McpContext implements Context, BrowserlessContext {
       }
     }
 
-    if (this.#selectedPage && !this.#selectedPage.isClosed()) {
-      // Automatic page snapshots must preserve real focus on untouched tabs.
+    if (
+      !this.#config.resolved.arc &&
+      this.#selectedPage &&
+      !this.#selectedPage.isClosed()
+    ) {
+      // Arc can suspend tabs, so enumeration must defer attachment to page tools.
       await this.#selectedPage.init({emulateFocus: false});
     }
 

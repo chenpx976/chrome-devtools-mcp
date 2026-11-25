@@ -131,10 +131,14 @@ export const newPage: ToolFactory = defineTool((args: ParsedArguments) => {
       isolatedContext: zod
         .string()
         .optional()
+        .refine(value => !args.arc || value === undefined, {
+          message: 'Arc does not support new_page isolatedContext.',
+        })
         .describe(
           'If specified, the page is created in an isolated browser context with the given name. ' +
             'Pages in the same browser context share cookies and storage. ' +
-            'Pages in different browser contexts are fully isolated (useful for clean-slate testing of cookies and authentication).',
+            'Pages in different browser contexts are fully isolated (useful for clean-slate testing of cookies and authentication). ' +
+            'Not supported with --arc.',
         ),
       ...timeoutSchema,
     },

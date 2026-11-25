@@ -633,6 +633,29 @@ describe('validateUrl', () => {
 });
 
 describe('isAllowedUrl', () => {
+  it('filters Arc internal pages while allowing its inspection and new-tab pages', () => {
+    for (const url of ['arc://inspect', 'arc://newtab', 'ARC://inspect/']) {
+      assert.strictEqual(
+        isAllowedUrl(url, {categoryExtensions: undefined}),
+        true,
+      );
+    }
+    for (const url of ['arc://settings', 'arc:settings', 'ARC://settings']) {
+      assert.strictEqual(
+        isAllowedUrl(url, {categoryExtensions: undefined}),
+        false,
+      );
+      assert.throws(
+        () =>
+          validateUrl(url, {
+            javascriptEvaluation: false,
+            categoryExtensions: false,
+            fileNavigations: false,
+          }),
+        /Navigating to arc: URLs is not allowed/,
+      );
+    }
+  });
   it('should allow chrome://newtab/ and chrome://inspect', () => {
     assert.strictEqual(
       isAllowedUrl('chrome://newtab/', {categoryExtensions: undefined}),

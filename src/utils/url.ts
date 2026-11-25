@@ -168,7 +168,7 @@ export function isAllowedUrl(
     return false;
   }
 
-  if (parsed.protocol === 'chrome:') {
+  if (parsed.protocol === 'chrome:' || parsed.protocol === 'arc:') {
     const host = parsed.hostname.toLowerCase();
     const path = parsed.pathname.toLowerCase();
     if (host === 'newtab' || host === 'new-tab-page' || host === 'inspect') {
@@ -186,6 +186,7 @@ export function isAllowedUrl(
 
   if (
     parsed.protocol === 'chrome:' ||
+    parsed.protocol === 'arc:' ||
     parsed.protocol === 'chrome-untrusted:'
   ) {
     return false;

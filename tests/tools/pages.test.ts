@@ -230,6 +230,17 @@ describe('pages', () => {
     });
   });
   describe('new_page', () => {
+    it('rejects isolatedContext in the Arc schema', () => {
+      const args = createMockParsedArguments({arc: true});
+      const schema = zod.object(newPage(args).schema);
+      assert.throws(
+        () => schema.parse({url: 'https://example.com', isolatedContext: 'a'}),
+        /Arc does not support new_page isolatedContext/,
+      );
+      assert.deepStrictEqual(schema.parse({url: 'https://example.com'}), {
+        url: 'https://example.com',
+      });
+    });
     it('sets the selected page and response flags', async () => {
       const {page, context, response, args} = createHandlerMocks();
       context.newPage.resolves(page);

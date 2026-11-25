@@ -33,6 +33,7 @@ Note: For `evaluate_script`, `pageId` is required when targeting pages. However,
 ### Tool selection
 
 - **Network mocks**: `mock_network` and `remove_network_mock` require `--categoryNetworkMocks` at server startup.
+- **Arc**: Use a locally patched server with `--arc`; `new_page` creates a native tab, rejects `isolatedContext`, and supports background selection restoration. Verify CDP features against the installed Arc version.
 - **Automation/interaction**: `take_snapshot` (text-based, faster, better for automation)
 - **Visual inspection**: `take_screenshot` (when user needs to see visual state)
 - **CSS & Styling inspection**: Use `get_css_styles` to inspect computed styles, matched rules, cascade, and CSS variables (pass `computedProperties` for unmatched defaults). Treat the output as authoritative.

@@ -6,13 +6,16 @@
 
 import assert from 'node:assert';
 import fs from 'node:fs';
-import {describe, it} from 'node:test';
+import {beforeEach, describe, it} from 'node:test';
 
 import sinon from 'sinon';
 
 import {ConfigLocator} from '../../src/config/ConfigLocator.js';
 import {ConfigParser} from '../../src/config/ConfigParser.js';
-import {DEFAULT_FILESYSTEM_ROOT} from '../../src/config/mcp-options.js';
+import {
+  DEFAULT_FILESYSTEM_ROOT,
+  type ParsedArguments,
+} from '../../src/config/mcp-options.js';
 import {
   type ReadonlyServerConfig,
   ServerConfig,
@@ -85,6 +88,174 @@ describe('ServerConfig', () => {
           }),
         /Implications failed:\n {2}experimentalFfmpegPath -> experimentalScreencast/,
       );
+    });
+  });
+
+  describe('Arc configuration', () => {
+    let platform: sinon.SinonStub;
+
+    beforeEach(() => {
+      platform = sinon.stub(process, 'platform').value('darwin');
+    });
+
+    it('defaults arc to false', () => {
+      assert.strictEqual(parseConfig().resolved.arc, false);
+    });
+
+    for (const viaCli of [false, true]) {
+      it(`accepts loopback endpoints with viaCli=${viaCli}`, () => {
+        for (const endpoint of [
+          '--browserUrl=http://127.0.0.1:9222',
+          '--browserUrl=https://localhost:9222',
+          '--browserUrl=http://127.1.2.3:9222',
+          '--browserUrl=http://[::1]:9222',
+          '--wsEndpoint=ws://localhost:9222/devtools/browser/id',
+          '--wsEndpoint=wss://[::1]:9222/devtools/browser/id',
+          '--wsEndpoint=ws://[::ffff:127.0.0.1]:9222/devtools/browser/id',
+        ]) {
+          const {resolved} = parseConfig([
+            '--arc',
+            `--viaCli=${viaCli}`,
+            endpoint,
+          ]);
+          assert.strictEqual(resolved.arc, true);
+          assert.strictEqual(resolved.headless, false);
+          assert.strictEqual(resolved.isolated, false);
+          assert.strictEqual(resolved.channel, undefined);
+        }
+      });
+    }
+
+    it('requires an explicit endpoint', () => {
+      assert.throws(
+        () => parseConfig(['--arc']),
+        /arc requires an explicit browserUrl or wsEndpoint/,
+      );
+    });
+
+    it('rejects remote and unspecified endpoints', () => {
+      for (const host of [
+        'example.com',
+        '192.168.1.2',
+        '0.0.0.0',
+        '[::]',
+        '[::ffff:192.168.1.2]',
+        'localhost.example.com',
+        'localhost@remote.example',
+      ]) {
+        for (const endpoint of [
+          `--browserUrl=http://${host}:9222`,
+          `--wsEndpoint=ws://${host}:9222/devtools/browser/id`,
+        ]) {
+          assert.throws(
+            () => parseConfig(['--arc', endpoint]),
+            /arc requires a loopback browserUrl or wsEndpoint/,
+          );
+        }
+      }
+    });
+
+    it('rejects conflicting explicit options including channel=stable', () => {
+      for (const option of [
+        'autoConnect',
+        'headless',
+        'isolated',
+        'executablePath=/Applications/Arc.app',
+        'userDataDir=/tmp/arc-profile',
+        'channel=stable',
+        'channel=canary',
+      ]) {
+        assert.throws(
+          () =>
+            parseConfig([
+              '--arc',
+              '--browserUrl=http://127.0.0.1:9222',
+              `--${option}`,
+            ]),
+          new RegExp(
+            `Arguments arc and ${option.split('=')[0]} are mutually exclusive`,
+          ),
+        );
+      }
+    });
+
+    it('accepts explicitly false launch options', () => {
+      const {resolved} = parseConfig([
+        '--arc',
+        '--browserUrl=http://127.0.0.1:9222',
+        '--autoConnect=false',
+        '--headless=false',
+        '--isolated=false',
+      ]);
+      assert.strictEqual(resolved.arc, true);
+    });
+
+    it('rejects simultaneous browserUrl and wsEndpoint', () => {
+      assert.throws(
+        () =>
+          parseConfig([
+            '--arc',
+            '--browserUrl=http://127.0.0.1:9222',
+            '--wsEndpoint=ws://127.0.0.1:9222/devtools/browser/id',
+          ]),
+        /Arguments browserUrl and wsEndpoint are mutually exclusive/,
+      );
+    });
+
+    it('requires macOS', () => {
+      platform.value('linux');
+      assert.throws(
+        () => parseConfig(['--arc', '--browserUrl=http://localhost:9222']),
+        /arc requires macOS/,
+      );
+    });
+
+    it('arc=false preserves existing behavior on other platforms', () => {
+      platform.value('win32');
+      const flags = ['--viaCli', '--browserUrl=http://remote.example:9222'];
+      assert.deepStrictEqual(
+        parseConfig(['--arc=false', ...flags]).resolved,
+        parseConfig(flags).resolved,
+      );
+    });
+
+    it('validates merged config-file inputs and allows CLI overrides', () => {
+      const invalidOptions: Array<Partial<ParsedArguments>> = [
+        {},
+        {browserUrl: 'http://remote.example:9222'},
+        {browserUrl: 'http://localhost:9222', headless: true},
+      ];
+      for (const options of invalidOptions) {
+        using configFile = createTempFile(
+          JSON.stringify({arc: true, ...options}),
+          'cd4a.arc.config.json',
+        );
+        assert.throws(
+          () => parseConfig([`--config=${configFile.path}`]),
+          /arc requires|Arguments arc and headless/,
+        );
+        assert.strictEqual(
+          parseConfig([`--config=${configFile.path}`, '--arc=false']).resolved
+            .arc,
+          false,
+        );
+      }
+      using configFile = createTempFile(
+        JSON.stringify({arc: true, browserUrl: 'http://localhost:9222'}),
+        'cd4a.arc.valid.config.json',
+      );
+      assert.strictEqual(
+        parseConfig([`--config=${configFile.path}`]).resolved.arc,
+        true,
+      );
+    });
+
+    it('requires a restart and keeps the current Arc mode during reload', () => {
+      const endpoint = '--browserUrl=http://localhost:9222';
+      const current = parseConfig([endpoint]);
+      const next = parseConfig(['--arc', endpoint]);
+      assert.deepStrictEqual(current.getRestartRequiredChanges(next), ['arc']);
+      assert.strictEqual(current.mergeReloadable(next).resolved.arc, false);
     });
   });
 

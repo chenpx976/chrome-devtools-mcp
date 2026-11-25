@@ -32,6 +32,9 @@ MCP clients.
 Other Chromium-based browsers may work, but this is not guaranteed, and you may encounter unexpected behavior. Use at your own discretion.
 We are committed to providing fixes and support for the latest version of [Extended Stable Chrome](https://chromiumdash.appspot.com/schedule).
 
+For the opt-in macOS Arc adaptation, see [Arc setup](./docs/arc.md), including
+how to run the locally built server and verify browser compatibility.
+
 Performance tools may send trace URLs to the Google CrUX API to fetch real-user
 experience data. This helps provide a holistic performance picture by
 presenting field data alongside lab data. This data is collected by the [Chrome
@@ -117,15 +120,16 @@ See the [CLI guide][cli] for all commands and options.
 
 The package includes [skills](./skills) that teach your agent how to use Chrome DevTools:
 
-| Skill                                                     | Use it to                                       |
-| --------------------------------------------------------- | ----------------------------------------------- |
-| [`chrome-devtools`](./skills/chrome-devtools)             | Debug and automate pages with the MCP tools.    |
-| [`chrome-devtools-cli`](./skills/chrome-devtools-cli)     | Run the CLI and write shell scripts with it.    |
-| [`a11y-debugging`](./skills/a11y-debugging)               | Audit and fix accessibility issues.             |
-| [`cookie-debugging`](./skills/cookie-debugging)           | Debug cookies, sessions, and authentication.    |
-| [`debug-optimize-lcp`](./skills/debug-optimize-lcp)       | Debug and improve Largest Contentful Paint.     |
-| [`memory-leak-debugging`](./skills/memory-leak-debugging) | Find and fix memory leaks.                      |
-| [`troubleshooting`](./skills/troubleshooting)             | Fix connection problems between MCP and Chrome. |
+| Skill                                                     | Use it to                                                |
+| --------------------------------------------------------- | -------------------------------------------------------- |
+| [`chrome-devtools`](./skills/chrome-devtools)             | Debug and automate pages with the MCP tools.             |
+| [`chrome-devtools-cli`](./skills/chrome-devtools-cli)     | Run the CLI and write shell scripts with it.             |
+| [`a11y-debugging`](./skills/a11y-debugging)               | Audit and fix accessibility issues.                      |
+| [`cookie-debugging`](./skills/cookie-debugging)           | Debug cookies, sessions, and authentication.             |
+| [`debug-optimize-lcp`](./skills/debug-optimize-lcp)       | Debug and improve Largest Contentful Paint.              |
+| [`memory-leak-debugging`](./skills/memory-leak-debugging) | Find and fix memory leaks.                               |
+| [`troubleshooting`](./skills/troubleshooting)             | Fix connection problems between MCP and Chrome.          |
+| [`arc-compatibility`](./skills/arc-compatibility)         | Reapply and verify the Arc patch after upstream updates. |
 
 ### Install skills as a plugin
 

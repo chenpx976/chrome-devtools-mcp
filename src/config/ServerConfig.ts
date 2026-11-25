@@ -7,6 +7,7 @@
 import {isDeepStrictEqual} from 'node:util';
 
 import {yargs} from '../third_party/cli.js';
+import {isLocalhost} from '../utils/url.js';
 
 import {
   CONFLICTING_ARGS,
@@ -80,6 +81,39 @@ function parseDefaultArgs(options: McpOptions): ParsedArguments {
     // `viaCli` check in `applyDefaults()` compares with `===`.
     filesystemRoot: DEFAULT_FILESYSTEM_ROOT,
   };
+}
+
+function validateArcOptions(args: Partial<ParsedArguments>): void {
+  if (!args.arc) {
+    return;
+  }
+  if (process.platform !== 'darwin') {
+    throw new Error('Argument arc requires macOS.');
+  }
+  const conflictingOptions: Array<keyof ParsedArguments> = [
+    'autoConnect',
+    'headless',
+    'executablePath',
+    'isolated',
+    'userDataDir',
+    'channel',
+  ];
+  for (const name of conflictingOptions) {
+    if (args[name] !== undefined && args[name] !== false) {
+      throw new Error(`Arguments arc and ${name} are mutually exclusive`);
+    }
+  }
+  const endpoint = args.browserUrl ?? args.wsEndpoint;
+  if (!endpoint) {
+    throw new Error(
+      'Argument arc requires an explicit browserUrl or wsEndpoint.',
+    );
+  }
+  if (!isLocalhost(endpoint)) {
+    throw new Error(
+      'Argument arc requires a loopback browserUrl or wsEndpoint.',
+    );
+  }
 }
 
 export interface ReadonlyServerConfig {
@@ -180,6 +214,10 @@ export class ServerConfig implements ReadonlyServerConfig {
       ...filterExplicitArgs(explicitArgs, baseOptions),
     };
 
+    if (resolvedArgs.arc && explicitArgs.headless === undefined) {
+      resolvedArgs.headless = false;
+    }
+
     // `channel` only applies when Chrome is launched by channel. Leaving it
     // unset otherwise keeps it out of telemetry (computeFlagUsage).
     const launchesByChannel =
@@ -248,6 +286,7 @@ export class ServerConfig implements ReadonlyServerConfig {
       ...options.cliArgs,
       ...(options.configPath ? {config: options.configPath} : {}),
     };
+    validateArcOptions(explicitArgs);
     ServerConfig.validateConflicts(explicitArgs);
     ServerConfig.validateImplications(explicitArgs);
     const resolved = ServerConfig.applyDefaults(explicitArgs, {

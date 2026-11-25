@@ -506,5 +506,13 @@
   {
     "name": "background_new_pages",
     "flagType": "boolean"
+  },
+  {
+    "name": "arc_present",
+    "flagType": "boolean"
+  },
+  {
+    "name": "arc",
+    "flagType": "boolean"
   }
 ]

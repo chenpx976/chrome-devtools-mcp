@@ -9,6 +9,8 @@
   },
   "main": "./out/Default/gen/src/index.js",
   "scripts": {
+    "arc:restart": "node scripts/arc-restart.mjs",
+    "arc:smoke": "npm run build && node scripts/arc-smoke.mjs",
     "cli:generate": "node scripts/generate-cli.ts",
     "clean": "node scripts/clean.ts",
     "clean:submodules": "node scripts/clean-submodules.ts",
