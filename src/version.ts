@@ -6,7 +6,7 @@
 
 // If moved update release-please config
 // x-release-please-start-version
-export const VERSION = '1.13.0';
+export const VERSION = '1.14.0';
 // x-release-please-end
 
 export const PACKAGE_NAME = '@chenpx976/chrome-devtools-mcp';

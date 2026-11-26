@@ -1,7 +1,7 @@
 {
   "name": "devtools-for-agents",
   "description": "Arc-compatible fork of Chrome DevTools for agents, preserving upstream Chrome automation, debugging, and performance analysis.",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "author": {
     "name": "Google Chrome"
   },
@@ -12,7 +12,7 @@
     "chrome-devtools": {
       "command": "npx",
       "args": [
-        "@chenpx976/chrome-devtools-mcp@1.13.0"
+        "@chenpx976/chrome-devtools-mcp@1.14.0"
       ]
     }
   }
