@@ -24,6 +24,47 @@ cannot be combined with `--workspace`.
 chrome-devtools start --workspace=/path/to/project --workspace=/path/to/output
 ```
 
+### Connect to Arc on macOS
+
+First [prepare Arc](./arc.md#prepare-arc): enable loopback remote debugging,
+keep a regular Arc window open, and allow Automation permission when macOS
+asks. Install the package as described above, then explicitly start the CLI
+daemon in Arc mode before calling tools:
+
+```sh
+chrome-devtools start \
+  --arc \
+  --browserUrl=http://127.0.0.1:9222 \
+  --headless=false \
+  --isolated=false
+
+chrome-devtools list_pages
+```
+
+The CLI defaults to headless mode, so disable it when connecting to Arc.
+Arc uses the running browser's profile; isolated mode must also be disabled.
+Calling a tool without starting the daemon in Arc mode can auto-start Chrome.
+The `start` command starts or restarts the CLI daemon with these options.
+
+Replace `1` below with a page ID returned by `list_pages`:
+
+```sh
+# Inspect a page and read its title.
+chrome-devtools take_snapshot 1
+chrome-devtools evaluate_script "() => document.title" --pageId 1
+
+# Save a screenshot of that page.
+chrome-devtools take_screenshot 1 --filePath screenshot.png
+
+# Create a native Arc tab and list pages as JSON.
+chrome-devtools new_page "https://example.com"
+chrome-devtools list_pages --output-format=json
+
+# Check or stop the CLI daemon.
+chrome-devtools status
+chrome-devtools stop
+```
+
 ## Agent skill
 
 The [`chrome-devtools-cli`](../skills/chrome-devtools-cli) skill teaches your agent how to use the CLI. Plugin installs include this skill. To install it manually, copy the skill folder into the skills directory of your agent:

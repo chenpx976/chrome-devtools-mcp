@@ -143,6 +143,10 @@ Both binaries ship in this one package: `chrome-devtools-mcp` and
 `chrome-devtools`. Do not install or publish a separate `chrome-devtools` alias
 package. The MCP/tool names and CLI commands stay unchanged.
 
+For terminal commands, see
+[Connect to Arc with the CLI](./cli.md#connect-to-arc-on-macos),
+including daemon startup, page snapshots, screenshots, and JSON output.
+
 ## Publish and verify the scoped package
 
 Publication is a maintainer action. Update the release status only after
