@@ -1,6 +1,6 @@
 {
   "name": "chrome-devtools-plugins",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "Arc-compatible distribution of upstream Chrome DevTools plugins.",
   "repository": "https://github.com/chenpx976/chrome-devtools-mcp",
   "owner": {

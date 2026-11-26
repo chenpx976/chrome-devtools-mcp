@@ -1,6 +1,6 @@
 {
   "name": "@chenpx976/chrome-devtools-mcp",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "Chrome DevTools MCP with native Arc support on macOS",
   "type": "module",
   "publishConfig": {

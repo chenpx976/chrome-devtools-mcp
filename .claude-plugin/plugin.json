@@ -1,6 +1,6 @@
 {
   "name": "chrome-devtools-mcp",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "Arc-compatible fork of Chrome DevTools for agents, preserving upstream Chrome automation, debugging, and performance analysis",
   "mcpServers": {
     "chrome-devtools": {
@@ -8,7 +8,7 @@
       "args": [
         "--prefix",
         "${CLAUDE_PLUGIN_DATA}",
-        "@chenpx976/chrome-devtools-mcp@1.13.0"
+        "@chenpx976/chrome-devtools-mcp@1.14.0"
       ]
     }
   }
