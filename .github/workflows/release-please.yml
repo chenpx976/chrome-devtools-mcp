@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - arc-support
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -10,7 +11,9 @@ name: release-please
 
 jobs:
   release-please:
-    if: github.repository == 'chenpx976/chrome-devtools-mcp'
+    if: >-
+      github.repository == 'chenpx976/chrome-devtools-mcp' &&
+      github.ref == 'refs/heads/arc-support'
     runs-on: ubuntu-latest
     permissions:
       contents: write
