@@ -12,10 +12,24 @@ jobs:
   release-please:
     if: github.repository == 'chenpx976/chrome-devtools-mcp'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
     steps:
       - uses: googleapis/release-please-action@v5
+        id: release
         with:
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+          token: ${{ github.token }}
           target-branch: arc-support
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      - name: Publish the created release
+        if: steps.release.outputs.release_created == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag_name }}
+        run: |
+          gh workflow run publish-to-npm-on-tag.yml --ref "$RELEASE_TAG"

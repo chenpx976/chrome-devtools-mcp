@@ -59,8 +59,8 @@ rather than bypassed.
 
 ## Build and configure the local server
 
-Clone the maintained `arc-support` branch explicitly; the fork's default
-`main` branch remains an upstream mirror:
+Clone the maintained default branch, `arc-support`; `main` remains an
+upstream mirror:
 
 ```sh
 git clone --branch arc-support https://github.com/chenpx976/chrome-devtools-mcp.git
@@ -171,15 +171,20 @@ the version is still processing; wait until that exact version is available.
    Publish only `@chenpx976/chrome-devtools-mcp`; no alias package is released.
 4. Once the package exists, configure its npm **Trusted Publisher** as GitHub
    Actions: organization/user `chenpx976`, repository `chrome-devtools-mcp`,
-   workflow filename `publish-to-npm-on-tag.yml`. Leave the environment unset
-   unless the workflow uses a matching GitHub environment. This enables
-   subsequent releases through GitHub OIDC rather than a stored npm token.
-   The workflow grants `id-token: write` and uses an OIDC-capable npm version.
-5. Release automation tracks `arc-support` and retains tag names such as
-   `chrome-devtools-mcp-v1.13.0`. When release-please uses the default
-   `GITHUB_TOKEN`, its tag pushes do not trigger the publishing workflow.
-   Manually dispatch `publish-to-npm-on-tag.yml` with the release tag selected,
-   or configure `RELEASE_PLEASE_TOKEN` with permission to trigger workflows.
+   workflow filename `publish-to-npm-on-tag.yml`. Enable **Allow npm publish**
+   and leave the environment unset. The workflow grants `id-token: write`
+   and uses an OIDC-capable npm version; no npm token secret is needed.
+   A new trusted publisher must complete a successful publish within two
+   days, or npm expires the configuration.
+5. Release automation tracks the default branch, `arc-support`. Allow GitHub
+   Actions to create pull requests in the repository's Actions settings.
+   Review and merge the release-please version PR to create the release tag.
+   The release workflow dispatches `publish-to-npm-on-tag.yml` at that tag
+   using `GITHUB_TOKEN`; no `RELEASE_PLEASE_TOKEN` is required. This explicit
+   dispatch is needed because tag pushes made by `GITHUB_TOKEN` do not
+   trigger another workflow. Publishing runs only for
+   `chrome-devtools-mcp-v*` tags. To retry a failed release, manually dispatch
+   the publishing workflow with that release tag selected.
    Never republish the bootstrapped `1.13.0`; publish a new version for the
    next release. GitHub OIDC setup alone does not prove a publish succeeded.
 6. Query the published artifact, then install that exact version into a clean
